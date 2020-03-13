@@ -15,7 +15,7 @@ RUN go get -d github.com/gogo/protobuf/protoc-gen-gogofaster \
         && git checkout -q $GOGO_VERSION \
         && go install ./protoc-gen-gogo ./protoc-gen-gogofaster ./protoc-gen-gogoslick
 
-WORKDIR /go/src/github.com/moby/buildkit
+WORKDIR /go/src/github.com/scope-demo/buildkit
 
 # Generate into a subdirectory because if it is in the root then the
 # extraction with `docker export` ends up putting `.dockerenv`, `dev`,

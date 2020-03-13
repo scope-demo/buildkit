@@ -24,12 +24,12 @@ set -x
 buildctl build $progressFlag --frontend=dockerfile.v0 \
   $currentcontextBuildctl \
   --opt target=binaries \
-  --import-cache type=registry,ref=cicache.buildk.it/moby/buildkit/master:binaries \
-  --import-cache type=registry,ref=cicache.buildk.it/moby/buildkit/master:integration-tests \
+  --import-cache type=registry,ref=cicache.buildk.it/scope-demo/buildkit/master:binaries \
+  --import-cache type=registry,ref=cicache.buildk.it/scope-demo/buildkit/master:integration-tests \
   $exportCacheFlags $exportFlags:binaries
 
 buildctl build $progressFlag --frontend=dockerfile.v0 \
   $currentcontextBuildctl \
   --opt target=integration-tests-base \
-  --import-cache cicache.buildk.it/moby/buildkit/master:integration-tests \
+  --import-cache cicache.buildk.it/scope-demo/buildkit/master:integration-tests \
   $exportCacheFlags $exportFlags:integration-tests

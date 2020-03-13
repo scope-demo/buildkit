@@ -49,7 +49,7 @@ case $buildmode in
   buildctl build $progressFlag --frontend=dockerfile.v0 $currentcontextBuildctl \
     --opt target=integration-tests \
     --output type=docker,name=$iid,dest=$tmpfile \
-    --import-cache type=registry,ref=cicache.buildk.it/moby/buildkit/master:integration-tests $importCacheFlags
+    --import-cache type=registry,ref=cicache.buildk.it/scope-demo/buildkit/master:integration-tests $importCacheFlags
   docker load -i $tmpfile
   rm $tmpfile
   ;;
