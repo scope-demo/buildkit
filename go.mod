@@ -28,31 +28,34 @@ require (
 	github.com/gofrs/flock v0.7.0
 	github.com/gogo/googleapis v1.3.2
 	github.com/gogo/protobuf v1.3.1
-	github.com/golang/protobuf v1.3.3
-	github.com/google/go-cmp v0.3.1
+	github.com/golang/groupcache v0.0.0-20200121045136-8c9f03a8e57e // indirect
+	github.com/golang/protobuf v1.3.5
+	github.com/google/go-cmp v0.4.0
 	github.com/google/shlex v0.0.0-20150127133951-6f45313302b9
-	github.com/google/uuid v1.1.1 // indirect
 	github.com/grpc-ecosystem/grpc-opentracing v0.0.0-20180507213350-8e809c8a8645
 	github.com/hashicorp/go-immutable-radix v1.0.0
-	github.com/hashicorp/golang-lru v0.5.1
+	github.com/hashicorp/golang-lru v0.5.4
 	github.com/hashicorp/uuid v0.0.0-20160311170451-ebb0a03e909c // indirect
 	github.com/imdario/mergo v0.3.7 // indirect
 	github.com/ishidawataru/sctp v0.0.0-20191218070446-00ab2ac2db07 // indirect
 	github.com/jaguilar/vt100 v0.0.0-20150826170717-2703a27b14ea
+	github.com/kr/text v0.2.0 // indirect
 	github.com/mitchellh/hashstructure v0.0.0-20170609045927-2bca23e0e452
 	github.com/morikuni/aec v0.0.0-20170113033406-39771216ff4c
+	github.com/niemeyer/pretty v0.0.0-20200227124842-a10e7caefd8e // indirect
 	github.com/opencontainers/go-digest v1.0.0-rc1
 	github.com/opencontainers/image-spec v1.0.1
 	github.com/opencontainers/runc v1.0.0-rc9.0.20200221051241-688cf6d43cc4
 	github.com/opencontainers/runtime-spec v1.0.1
 	github.com/opencontainers/selinux v1.3.2 // indirect
 	github.com/opentracing-contrib/go-stdlib v0.0.0-20171029140428-b1a47cfbdd75
-	github.com/opentracing/opentracing-go v0.0.0-20171003133519-1361b9cd60be
+	github.com/opentracing/opentracing-go v1.1.0
 	github.com/pkg/errors v0.9.1
 	github.com/pkg/profile v1.2.1
 	github.com/serialx/hashring v0.0.0-20190422032157-8b2912629002
 	github.com/sirupsen/logrus v1.4.2
-	github.com/stretchr/testify v1.4.0
+	github.com/stretchr/objx v0.2.0 // indirect
+	github.com/stretchr/testify v1.5.1
 	github.com/syndtr/gocapability v0.0.0-20180916011248-d98352740cb2 // indirect
 	github.com/tonistiigi/fsutil v0.0.0-20200225063759-013a9fe6aee2
 	github.com/tonistiigi/units v0.0.0-20180711220420-6950e57a87ea
@@ -62,14 +65,17 @@ require (
 	github.com/vishvananda/netlink v1.0.0 // indirect
 	github.com/vishvananda/netns v0.0.0-20180720170159-13995c7128cc // indirect
 	go.etcd.io/bbolt v1.3.3
-	golang.org/x/crypto v0.0.0-20200221231518-2aa609cf4a9d
-	golang.org/x/net v0.0.0-20200226121028-0de0cce0169b
+	go.opencensus.io v0.22.3 // indirect
+	go.undefinedlabs.com/scopeagent v0.1.12
+	golang.org/x/crypto v0.0.0-20200311171314-f7b00557c8c4
+	golang.org/x/net v0.0.0-20200301022130-244492dfa37a
 	golang.org/x/sync v0.0.0-20190911185100-cd5d95a43a6e
-	golang.org/x/sys v0.0.0-20200223170610-d5e6a3e2c0ae
+	golang.org/x/sys v0.0.0-20200302150141-5c8b2ff67527
 	golang.org/x/time v0.0.0-20191024005414-555d28b269f0
-	google.golang.org/genproto v0.0.0-20200227132054-3f1135a288c9
-	google.golang.org/grpc v1.27.1
-	gopkg.in/check.v1 v1.0.0-20180628173108-788fd7840127 // indirect
+	google.golang.org/genproto v0.0.0-20200313141609-30c55424f95d
+	google.golang.org/grpc v1.28.0
+	gopkg.in/check.v1 v1.0.0-20200227125254-8fa46927fb4f // indirect
+	gopkg.in/yaml.v2 v2.2.8 // indirect
 	gotest.tools v2.2.0+incompatible
 	gotest.tools/v3 v3.0.2 // indirect
 )
