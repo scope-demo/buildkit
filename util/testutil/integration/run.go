@@ -143,7 +143,7 @@ func Run(t *testing.T, testCases []Test, opt ...TestOpt) {
 				fn := getFunctionName(tc)
 				name := fn + "/worker=" + br.Name() + mv.functionSuffix()
 				func(fn, testName string, br Worker, tc Test, mv matrixValue) {
-					ok := t.Run(testName, func(t *testing.T) {
+					ok := scopeagent.GetTest(t).Run(testName, func(t *testing.T) {
 						defer cleanOnComplete()()
 						if !strings.HasSuffix(fn, "NoParallel") {
 							t.Parallel()

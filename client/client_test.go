@@ -151,7 +151,7 @@ func testCacheExportCacheKeyLoop(t *testing.T, sb integration.Sandbox) {
 
 	for _, mode := range []bool{false, true} {
 		func(mode bool) {
-			t.Run(fmt.Sprintf("mode=%v", mode), func(t *testing.T) {
+			scopeagent.GetTest(t).Run(fmt.Sprintf("mode=%v", mode), func(t *testing.T) {
 				buildbase := llb.Image("alpine:latest").File(llb.Copy(llb.Local("mylocal"), "foo", "foo"))
 				if mode { // same cache keys with a separating node go to different code-path
 					buildbase = buildbase.Run(llb.Shlex("true")).Root()
@@ -764,10 +764,10 @@ func testFrontendImageNaming(t *testing.T, sb integration.Sandbox) {
 		// that the inner-most tests (with the actual
 		// functionality) have definitely completed before the
 		// sandbox and registry cleanups (defered above) are run.
-		t.Run(winner, func(t *testing.T) {
+		scopeagent.GetTest(t).Run(winner, func(t *testing.T) {
 			for _, exp := range []string{ExporterOCI, ExporterDocker, ExporterImage} {
 				exp := exp // capture loop variable.
-				t.Run(exp, func(t *testing.T) {
+				scopeagent.GetTest(t).Run(exp, func(t *testing.T) {
 					destDir, err := ioutil.TempDir("", "buildkit")
 					require.NoError(t, err)
 					defer os.RemoveAll(destDir)

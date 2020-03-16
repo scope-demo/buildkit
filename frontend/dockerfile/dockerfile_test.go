@@ -222,7 +222,7 @@ echo -n $my_arg $1 > /out
 		{"empty", map[string]string{"build-arg:my_arg": ""}, "my_arg=def_val my_arg=def_val"},
 		{"override", map[string]string{"build-arg:my_arg": "override"}, "my_arg=override my_arg=override"},
 	} {
-		t.Run(x.name, func(t *testing.T) {
+		scopeagent.GetTest(t).Run(x.name, func(t *testing.T) {
 			_, err = f.Solve(context.TODO(), c, client.SolveOpt{
 				FrontendAttrs: x.frontendAttrs,
 				Exports: []client.ExportEntry{
@@ -1264,7 +1264,7 @@ COPY arch-$TARGETARCH whoami
 		{p: "linux/arm/v6", os: "linux", arch: "arm", dt: "i am arm"},
 		{p: "linux/ppc64le", os: "linux", arch: "ppc64le", dt: "i am ppc64le"},
 	} {
-		t.Run(exp.p, func(t *testing.T) {
+		scopeagent.GetTest(t).Run(exp.p, func(t *testing.T) {
 			require.Equal(t, exp.p, platforms.Format(*idx.Manifests[i].Platform))
 
 			var mfst ocispec.Manifest
