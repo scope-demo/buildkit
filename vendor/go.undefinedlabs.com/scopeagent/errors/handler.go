@@ -1,7 +1,9 @@
 package errors
 
 import (
+	"context"
 	"fmt"
+	"path/filepath"
 	"strings"
 	"time"
 
@@ -9,6 +11,8 @@ import (
 	"github.com/opentracing/opentracing-go"
 	"github.com/opentracing/opentracing-go/log"
 
+	"go.undefinedlabs.com/scopeagent/instrumentation"
+	"go.undefinedlabs.com/scopeagent/tags"
 	"go.undefinedlabs.com/scopeagent/tracer"
 )
 
@@ -27,23 +31,25 @@ type StackFrames struct {
 	Package    string
 }
 
-var MarkSpanAsError = errors.New("")
+var markSpanAsError = errors.New("")
 
 // Write exception event in span using the recover data from panic
-func LogError(span opentracing.Span, recoverData interface{}, skipFrames int) {
-	var exceptionFields = getExceptionLogFields(recoverData, skipFrames+1)
-	span.LogFields(exceptionFields...)
+func WriteExceptionEvent(span opentracing.Span, recoverData interface{}, skipFrames int) {
 	span.SetTag("error", true)
+	if recoverData == markSpanAsError {
+		return
+	}
+	var exceptionFields = getExceptionLogFields("error", recoverData, skipFrames+1)
+	span.LogFields(exceptionFields...)
 }
 
-func LogErrorInRawSpan(rawSpan *tracer.RawSpan, err **errors.Error) {
+func WriteExceptionEventInRawSpan(rawSpan *tracer.RawSpan, err **errors.Error) {
 	if rawSpan.Tags == nil {
 		rawSpan.Tags = opentracing.Tags{}
 	}
-	if *err == MarkSpanAsError {
-		rawSpan.Tags["error"] = true
-	} else {
-		var exceptionFields = getExceptionLogFields(*err, 1)
+	rawSpan.Tags["error"] = true
+	if *err != markSpanAsError {
+		var exceptionFields = getExceptionLogFields("error", *err, 1)
 		if rawSpan.Logs == nil {
 			rawSpan.Logs = []opentracing.LogRecord{}
 		}
@@ -51,13 +57,12 @@ func LogErrorInRawSpan(rawSpan *tracer.RawSpan, err **errors.Error) {
 			Timestamp: time.Now(),
 			Fields:    exceptionFields,
 		})
-		rawSpan.Tags["error"] = true
-		*err = MarkSpanAsError
+		*err = markSpanAsError
 	}
 }
 
 // Gets the current stack frames array
-func GetCurrentStackFrames(skip int) []StackFrames {
+func getCurrentStackFrames(skip int) []StackFrames {
 	skip = skip + 1
 	err := errors.New(nil)
 	errStack := err.StackFrames()
@@ -65,18 +70,45 @@ func GetCurrentStackFrames(skip int) []StackFrames {
 	if nLength < 0 {
 		return nil
 	}
-	stackFrames := make([]StackFrames, nLength)
+	stackFrames := make([]StackFrames, 0)
 	for idx, frame := range errStack {
 		if idx >= skip {
-			stackFrames[idx-skip] = StackFrames{
-				File:       frame.File,
+			stackFrames = append(stackFrames, StackFrames{
+				File:       filepath.Clean(frame.File),
 				LineNumber: frame.LineNumber,
 				Name:       frame.Name,
 				Package:    frame.Package,
-			}
+			})
 		}
 	}
 	return stackFrames
+}
+
+// Write log event with stacktrace in span using the recover data from panic
+func LogPanic(ctx context.Context, recoverData interface{}, skipFrames int) {
+	span := opentracing.SpanFromContext(ctx)
+	if span == nil {
+		return
+	}
+	var exceptionFields = getExceptionLogFields(tags.LogEvent, recoverData, skipFrames+1)
+	exceptionFields = append(exceptionFields, log.String(tags.LogEventLevel, tags.LogLevel_ERROR))
+	span.LogFields(exceptionFields...)
+}
+
+// Gets the current stacktrace
+func GetCurrentStackTrace(skip int) map[string]interface{} {
+	var exFrames []map[string]interface{}
+	for _, frame := range getCurrentStackFrames(skip + 1) {
+		exFrames = append(exFrames, map[string]interface{}{
+			"name":   frame.Name,
+			"module": frame.Package,
+			"file":   frame.File,
+			"line":   frame.LineNumber,
+		})
+	}
+	return map[string]interface{}{
+		"frames": exFrames,
+	}
 }
 
 // Get the current error with the fixed stacktrace
@@ -84,17 +116,19 @@ func GetCurrentError(recoverData interface{}) *errors.Error {
 	return errors.Wrap(recoverData, 1)
 }
 
-func getExceptionLogFields(recoverData interface{}, skipFrames int) []log.Field {
+func getExceptionLogFields(eventType string, recoverData interface{}, skipFrames int) []log.Field {
 	if recoverData != nil {
 		err := errors.Wrap(recoverData, 2+skipFrames)
 		errMessage := err.Error()
-		errStack := err.StackFrames() //filterStackFrames(err.StackFrames())
+		errStack := err.StackFrames()
 		exceptionData := getExceptionFrameData(errMessage, errStack)
 		source := ""
 
 		if errStack != nil && len(errStack) > 0 {
+			sourceRoot := instrumentation.GetSourceRoot()
 			for _, currentFrame := range errStack {
-				if currentFrame.Package != "runtime" && currentFrame.File != "" {
+				dir := filepath.Dir(currentFrame.File)
+				if strings.Index(dir, sourceRoot) != -1 {
 					source = fmt.Sprintf("%s:%d", currentFrame.File, currentFrame.LineNumber)
 					break
 				}
@@ -102,7 +136,7 @@ func getExceptionLogFields(recoverData interface{}, skipFrames int) []log.Field 
 		}
 
 		fields := make([]log.Field, 5)
-		fields[0] = log.String(EventType, "error")
+		fields[0] = log.String(EventType, eventType)
 		fields[1] = log.String(EventSource, source)
 		fields[2] = log.String(EventMessage, errMessage)
 		fields[3] = log.String(EventStack, getStringStack(err, errStack))
@@ -120,25 +154,13 @@ func getStringStack(err *errors.Error, errStack []errors.StackFrame) string {
 	return fmt.Sprintf("[%s]: %s\n\n%s", err.TypeName(), err.Error(), strings.Join(frames, ""))
 }
 
-// Filter stack frames from the go-agent
-func filterStackFrames(errStack []errors.StackFrame) []errors.StackFrame {
-	var stack []errors.StackFrame
-	for _, frame := range errStack {
-		if strings.Contains(frame.Package, "undefinedlabs/go-agent") {
-			continue
-		}
-		stack = append(stack, frame)
-	}
-	return stack
-}
-
 func getExceptionFrameData(errMessage string, errStack []errors.StackFrame) map[string]interface{} {
 	var exFrames []map[string]interface{}
 	for _, frame := range errStack {
 		exFrames = append(exFrames, map[string]interface{}{
 			"name":   frame.Name,
 			"module": frame.Package,
-			"file":   frame.File,
+			"file":   filepath.Clean(frame.File),
 			"line":   frame.LineNumber,
 		})
 	}

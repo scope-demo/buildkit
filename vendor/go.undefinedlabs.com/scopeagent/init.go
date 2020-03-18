@@ -6,6 +6,7 @@ import (
 	"os"
 	"os/signal"
 	"runtime"
+	"sync"
 	"syscall"
 	"testing"
 
@@ -13,12 +14,22 @@ import (
 	"go.undefinedlabs.com/scopeagent/instrumentation"
 	"go.undefinedlabs.com/scopeagent/instrumentation/logging"
 	scopetesting "go.undefinedlabs.com/scopeagent/instrumentation/testing"
+	"go.undefinedlabs.com/scopeagent/reflection"
 )
 
-var defaultAgent *agent.Agent
+var (
+	defaultAgent *agent.Agent
+	runningMutex sync.RWMutex
+	running      bool
+)
 
 // Helper function to run a `testing.M` object and gracefully stopping the agent afterwards
 func Run(m *testing.M, opts ...agent.Option) int {
+	if getRunningFlag() {
+		return m.Run()
+	}
+	setRunningFlag(true)
+	defer setRunningFlag(false)
 	opts = append(opts, agent.WithTestingModeEnabled())
 	newAgent, err := agent.NewAgent(opts...)
 	if err != nil {
@@ -40,6 +51,15 @@ func Run(m *testing.M, opts ...agent.Option) int {
 		newAgent.Stop()
 		os.Exit(1)
 	}()
+	reflection.AddPanicHandler(func(e interface{}) {
+		instrumentation.Logger().Printf("Panic handler triggered by: %v,\nFlushing agent, sending partial results...", e)
+		newAgent.Flush()
+	})
+	reflection.AddOnPanicExitHandler(func(e interface{}) {
+		instrumentation.Logger().Printf("Process is going to end by: %v,\nStopping agent...", e)
+		scopetesting.PanicAllRunningTests(e, 3)
+		newAgent.Stop()
+	})
 
 	defaultAgent = newAgent
 	return newAgent.Run(m)
@@ -129,4 +149,15 @@ func GetBenchmark(b *testing.B) *scopetesting.Benchmark {
 func StartBenchmark(b *testing.B, benchFunc func(b *testing.B)) {
 	pc, _, _, _ := runtime.Caller(1)
 	scopetesting.StartBenchmark(b, pc, benchFunc)
+}
+
+func setRunningFlag(value bool) {
+	runningMutex.Lock()
+	defer runningMutex.Unlock()
+	running = value
+}
+func getRunningFlag() bool {
+	runningMutex.RLock()
+	defer runningMutex.RUnlock()
+	return running
 }

@@ -2,7 +2,6 @@ package testing
 
 import (
 	"context"
-	"fmt"
 	"reflect"
 	"regexp"
 	"runtime"
@@ -14,7 +13,6 @@ import (
 
 	"github.com/opentracing/opentracing-go"
 
-	"go.undefinedlabs.com/scopeagent/ast"
 	"go.undefinedlabs.com/scopeagent/errors"
 	"go.undefinedlabs.com/scopeagent/instrumentation"
 	"go.undefinedlabs.com/scopeagent/instrumentation/logging"
@@ -71,43 +69,29 @@ func StartTestFromCaller(t *testing.T, pc uintptr, opts ...Option) *Test {
 		opt(test)
 	}
 
-	// Extracting the benchmark func name (by removing any possible sub-benchmark suffix `{bench_func}/{sub_benchmark}`)
+	// Extracting the testing func name (by removing any possible sub-test suffix `{test_func}/{sub_test}`)
 	// to search the func source code bounds and to calculate the package name.
 	fullTestName := runner.GetOriginalTestName(t.Name())
-	testNameSlash := strings.IndexByte(fullTestName, '/')
-	funcName := fullTestName
-	if testNameSlash >= 0 {
-		funcName = fullTestName[:testNameSlash]
-	}
+	packageName := getPackageName(pc, fullTestName)
 
-	funcFullName := runtime.FuncForPC(pc).Name()
-	funcNameIndex := strings.LastIndex(funcFullName, funcName)
-	if funcNameIndex < 1 {
-		funcNameIndex = len(funcFullName)
-	}
-	packageName := funcFullName[:funcNameIndex-1]
-
-	sourceBounds, _ := ast.GetFuncSourceForName(pc, funcName)
-	var testCode string
-	if sourceBounds != nil {
-		testCode = fmt.Sprintf("%s:%d:%d", sourceBounds.File, sourceBounds.Start.Line, sourceBounds.End.Line)
-	}
-
-	var startOptions []opentracing.StartSpanOption
-	startOptions = append(startOptions, opentracing.Tags{
+	testTags := opentracing.Tags{
 		"span.kind":      "test",
 		"test.name":      fullTestName,
 		"test.suite":     packageName,
-		"test.code":      testCode,
 		"test.framework": "testing",
 		"test.language":  "go",
-	})
+	}
+
+	testCode := getTestCodeBoundaries(pc, fullTestName)
+	if testCode != "" {
+		testTags["test.code"] = testCode
+	}
 
 	if test.ctx == nil {
 		test.ctx = context.Background()
 	}
 
-	span, ctx := opentracing.StartSpanFromContextWithTracer(test.ctx, instrumentation.Tracer(), fullTestName, startOptions...)
+	span, ctx := opentracing.StartSpanFromContextWithTracer(test.ctx, instrumentation.Tracer(), fullTestName, testTags)
 	span.SetBaggageItem("trace.kind", "test")
 	test.span = span
 	test.ctx = ctx
@@ -161,21 +145,19 @@ func (test *Test) end() {
 		LogRecords: logRecords,
 	}
 
-	// Checks if the current test is running parallel to extract the coverage or not
-	if reflection.GetIsParallel(test.t) {
-		instrumentation.Logger().Printf("CodePath in parallel test is not supported: %v\n", test.t.Name())
-		restoreCoverageCounters()
-	} else {
-		cov := endCoverage()
-		test.span.SetTag(tags.Coverage, *cov)
+	if testing.CoverMode() != "" {
+		// Checks if the current test is running parallel to extract the coverage or not
+		if reflection.GetIsParallel(test.t) && parallel > 1 {
+			instrumentation.Logger().Printf("CodePath in parallel test is not supported: %v\n", test.t.Name())
+			restoreCoverageCounters()
+		} else if cov := endCoverage(); cov != nil {
+			test.span.SetTag(tags.Coverage, *cov)
+		}
 	}
 
 	if r := recover(); r != nil {
 		test.span.SetTag("test.status", tags.TestStatus_FAIL)
-		test.span.SetTag("error", true)
-		if r != errors.MarkSpanAsError {
-			errors.LogError(test.span, r, 1)
-		}
+		errors.WriteExceptionEvent(test.span, r, 1)
 		test.span.FinishWithOptions(finishOptions)
 		panic(r)
 	}
@@ -242,6 +224,28 @@ func GetTest(t *testing.T) *Test {
 		ctx:  context.TODO(),
 		span: nil,
 		t:    t,
+	}
+}
+
+// Fails and write panic on running tests
+// Use this only if the process is going to crash
+func PanicAllRunningTests(e interface{}, skip int) {
+	autoInstrumentedTestsMutex.Lock()
+	defer autoInstrumentedTestsMutex.Unlock()
+
+	// We copy the testMap because v.end() locks
+	testMapMutex.RLock()
+	tmp := map[*testing.T]*Test{}
+	for k, v := range testMap {
+		tmp[k] = v
+	}
+	testMapMutex.RUnlock()
+
+	for _, v := range tmp {
+		delete(autoInstrumentedTests, v.t)
+		v.t.Fail()
+		errors.WriteExceptionEvent(v.span, e, 1+skip)
+		v.end()
 	}
 }
 
