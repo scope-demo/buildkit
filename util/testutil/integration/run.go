@@ -4,6 +4,7 @@ import (
 	"bytes"
 	"context"
 	"fmt"
+	"go.undefinedlabs.com/scopeagent"
 	"io/ioutil"
 	"math/rand"
 	"os"

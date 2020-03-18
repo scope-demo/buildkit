@@ -9,6 +9,7 @@ import (
 	"encoding/json"
 	"encoding/pem"
 	"fmt"
+	"go.undefinedlabs.com/scopeagent"
 	"io"
 	"io/ioutil"
 	"net"

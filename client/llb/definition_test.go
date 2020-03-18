@@ -2,6 +2,7 @@ package llb
 
 import (
 	"bytes"
+	"go.undefinedlabs.com/scopeagent"
 	"testing"
 
 	"github.com/containerd/containerd/platforms"
