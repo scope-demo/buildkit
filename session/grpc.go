@@ -10,6 +10,7 @@ import (
 	opentracing "github.com/opentracing/opentracing-go"
 	"github.com/pkg/errors"
 	"github.com/sirupsen/logrus"
+	scopegrpc "go.undefinedlabs.com/scopeagent/instrumentation/grpc"
 	"golang.org/x/net/http2"
 	"google.golang.org/grpc"
 	"google.golang.org/grpc/health/grpc_health_v1"
@@ -45,6 +46,9 @@ func grpcClientConn(ctx context.Context, conn net.Conn) (context.Context, *grpc.
 			grpc.WithStreamInterceptor(otgrpc.OpenTracingStreamClientInterceptor(tracer, traceFilter())),
 		)
 	}
+
+	//Scope
+	dialOpts = append(dialOpts, scopegrpc.GetClientInterceptors()...)
 
 	cc, err := grpc.DialContext(ctx, "", dialOpts...)
 	if err != nil {
