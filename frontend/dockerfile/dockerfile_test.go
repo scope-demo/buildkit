@@ -7,6 +7,7 @@ import (
 	"context"
 	"encoding/json"
 	"fmt"
+	"go.undefinedlabs.com/scopeagent"
 	"io"
 	"io/ioutil"
 	"net/http"

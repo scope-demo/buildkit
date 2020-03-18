@@ -8,6 +8,7 @@ import (
 	"net/url"
 	"os"
 	"path"
+	"path/filepath"
 	"runtime"
 	"strings"
 	"sync"
@@ -59,7 +60,7 @@ type (
 )
 
 var (
-	version = "0.1.12"
+	version = "0.1.13-pre6"
 
 	testingModeFrequency    = time.Second
 	nonTestingModeFrequency = time.Minute
@@ -260,7 +261,7 @@ func NewAgent(options ...Option) (*Agent, error) {
 
 	// Current folder
 	wd, _ := os.Getwd()
-	agent.metadata[tags.CurrentFolder] = wd
+	agent.metadata[tags.CurrentFolder] = filepath.Clean(wd)
 
 	// Hostname
 	hostname, _ := os.Hostname()
@@ -291,11 +292,19 @@ func NewAgent(options ...Option) (*Agent, error) {
 	agent.metadata[tags.Dependencies] = getDependencyMap()
 
 	// Expand '~' in source root
+	var sourceRoot string
 	if sRoot, ok := agent.metadata[tags.SourceRoot]; ok {
-		if sRootEx, err := homedir.Expand(sRoot.(string)); err == nil {
-			agent.metadata[tags.SourceRoot] = sRootEx
+		cSRoot := sRoot.(string)
+		cSRoot = filepath.Clean(cSRoot)
+		if sRootEx, err := homedir.Expand(cSRoot); err == nil {
+			cSRoot = sRootEx
 		}
+		sourceRoot = cSRoot
 	}
+	if sourceRoot == "" {
+		sourceRoot = getGoModDir()
+	}
+	agent.metadata[tags.SourceRoot] = sourceRoot
 
 	if !agent.testingMode {
 		if env.ScopeTestingMode.IsSet {
@@ -332,15 +341,36 @@ func NewAgent(options ...Option) (*Agent, error) {
 		},
 		MaxLogsPerSpan: 10000,
 		// Log the error in the current span
-		OnSpanFinishPanic: scopeError.LogErrorInRawSpan,
+		OnSpanFinishPanic: scopeError.WriteExceptionEventInRawSpan,
 	})
 	instrumentation.SetTracer(agent.tracer)
 	instrumentation.SetLogger(agent.logger)
+	instrumentation.SetSourceRoot(sourceRoot)
 	if agent.setGlobalTracer || env.ScopeTracerGlobal.Value {
 		opentracing.SetGlobalTracer(agent.Tracer())
 	}
 
 	return agent, nil
+}
+
+func getGoModDir() string {
+	dir, err := os.Getwd()
+	if err != nil {
+		return filepath.Dir("/")
+	}
+	for {
+		rel, _ := filepath.Rel("/", dir)
+		// Exit the loop once we reach the basePath.
+		if rel == "." {
+			return filepath.Dir("/")
+		}
+		modPath := fmt.Sprintf("%v/go.mod", dir)
+		if _, err := os.Stat(modPath); err == nil {
+			return dir
+		}
+		// Going up!
+		dir += "/.."
+	}
 }
 
 func (a *Agent) setupLogging() error {
@@ -349,7 +379,7 @@ func (a *Agent) setupLogging() error {
 	if err != nil {
 		return err
 	}
-	a.recorderFilename = path.Join(dir, filename)
+	a.recorderFilename = filepath.Join(dir, filename)
 
 	file, err := os.OpenFile(a.recorderFilename, os.O_RDWR|os.O_CREATE|os.O_APPEND, 0666)
 	if err != nil {
@@ -393,6 +423,15 @@ func (a *Agent) Stop() {
 	a.PrintReport()
 }
 
+// Flush agent buffer
+func (a *Agent) Flush() {
+	a.logger.Println("Flushing agent buffer...")
+	err := a.recorder.Flush()
+	if err != nil {
+		a.logger.Println(err)
+	}
+}
+
 func generateAgentID() string {
 	agentId, err := uuid.NewRandom()
 	if err != nil {
@@ -424,16 +463,16 @@ func getLogPath() (string, error) {
 	if logFolder != "" {
 		if _, err := os.Stat(logFolder); err == nil {
 			return logFolder, nil
-		} else if os.IsNotExist(err) && os.Mkdir(logFolder, os.ModeDir) == nil {
+		} else if os.IsNotExist(err) && os.Mkdir(logFolder, 0755) == nil {
 			return logFolder, nil
 		}
 	}
 
 	// If the log folder can't be used we return a temporal path, so we don't miss the agent logs
-	logFolder = path.Join(os.TempDir(), "scope")
+	logFolder = filepath.Join(os.TempDir(), "scope")
 	if _, err := os.Stat(logFolder); err == nil {
 		return logFolder, nil
-	} else if os.IsNotExist(err) && os.Mkdir(logFolder, os.ModeDir) == nil {
+	} else if os.IsNotExist(err) && os.Mkdir(logFolder, 0755) == nil {
 		return logFolder, nil
 	} else {
 		return "", err

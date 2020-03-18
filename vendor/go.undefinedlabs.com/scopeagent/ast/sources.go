@@ -4,6 +4,7 @@ import (
 	"go/ast"
 	"go/parser"
 	"go/token"
+	"path/filepath"
 	"runtime"
 	"strings"
 	"sync"
@@ -36,6 +37,7 @@ func GetFuncSourceFromCaller(skip int) (*MethodCodeBoundaries, error) {
 func GetFuncSourceForName(pc uintptr, name string) (*MethodCodeBoundaries, error) {
 	mFunc := runtime.FuncForPC(pc)
 	mFile, _ := mFunc.FileLine(pc)
+	mFile = filepath.Clean(mFile)
 	fileCode, err := getCodesForFile(mFile)
 	if err != nil {
 		return nil, err
@@ -47,6 +49,7 @@ func GetFuncSourceForName(pc uintptr, name string) (*MethodCodeBoundaries, error
 func GetFuncSource(pc uintptr) (*MethodCodeBoundaries, error) {
 	mFunc := runtime.FuncForPC(pc)
 	mFile, _ := mFunc.FileLine(pc)
+	mFile = filepath.Clean(mFile)
 	fileCode, err := getCodesForFile(mFile)
 	if err != nil {
 		return nil, err
@@ -59,6 +62,7 @@ func GetFuncSource(pc uintptr) (*MethodCodeBoundaries, error) {
 
 func getCodesForFile(file string) (map[string]*MethodCodeBoundaries, error) {
 	mutex.Lock()
+	defer mutex.Unlock()
 	if methodCodes == nil {
 		methodCodes = map[string]map[string]*MethodCodeBoundaries{}
 	}
@@ -99,6 +103,5 @@ func getCodesForFile(file string) (map[string]*MethodCodeBoundaries, error) {
 			}
 		}
 	}
-	mutex.Unlock()
 	return methodCodes[file], nil
 }

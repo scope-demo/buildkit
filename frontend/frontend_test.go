@@ -2,6 +2,7 @@ package frontend
 
 import (
 	"context"
+	"go.undefinedlabs.com/scopeagent"
 	"io/ioutil"
 	"os"
 	"path/filepath"
