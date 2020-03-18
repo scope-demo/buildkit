@@ -80,7 +80,7 @@ func testRefReadFile(t *testing.T, sb integration.Sandbox) {
 			{"mid", []byte(`oba`), &gateway.FileRange{Offset: 2, Length: 3}},
 			{"overrun", []byte(`bar`), &gateway.FileRange{Offset: 3, Length: 10}},
 		} {
-			t.Run(tc.name, func(t *testing.T) {
+			scopeagent.GetTest(t).Run(tc.name, func(t *testing.T) {
 				r, err := ref.ReadFile(ctx, gateway.ReadRequest{
 					Filename: "test",
 					Range:    tc.r,
@@ -196,7 +196,7 @@ func testRefReadDir(t *testing.T, sb integration.Sandbox) {
 				},
 			},
 		} {
-			t.Run(tc.name, func(t *testing.T) {
+			scopeagent.GetTest(t).Run(tc.name, func(t *testing.T) {
 				dirents, err := ref.ReadDir(ctx, tc.req)
 				require.NoError(t, err)
 				for _, s := range dirents {
