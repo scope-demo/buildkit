@@ -191,8 +191,8 @@ github.com/vmihailenco/msgpack v4.0.4+incompatible h1:dSLoQfGFAo3F6OoNhwUmLwVgaU
 github.com/vmihailenco/msgpack v4.0.4+incompatible/go.mod h1:fy3FlTQTDXWkZ7Bh6AcGMlsjHatGryHQYUTf1ShIgkk=
 go.etcd.io/bbolt v1.3.2 h1:Z/90sZLPOeCy2PwprqkFa25PdkusRzaj9P8zm/KNyvk=
 go.etcd.io/bbolt v1.3.2/go.mod h1:IbVyRI1SCnLcuJnV2u8VeU0CEYM7e686BmAb1XKL+uU=
-go.undefinedlabs.com/scopeagent v0.1.13-0.20200317152908-a53991734a62 h1:DhP2F37HD1rjnuRzxGdr+xLzuX8eO4hD07/J5gpXDls=
-go.undefinedlabs.com/scopeagent v0.1.13-0.20200317152908-a53991734a62/go.mod h1:xPRIEZi2GPljVsTd+pGN+oavUIjawQ2umFuGv2ZPAzQ=
+go.undefinedlabs.com/scopeagent v0.1.13 h1:ZXjdSKZvz368IzkUp8brpfEeb5rJ7/3CLCHQIo5B/Sg=
+go.undefinedlabs.com/scopeagent v0.1.13/go.mod h1:xPRIEZi2GPljVsTd+pGN+oavUIjawQ2umFuGv2ZPAzQ=
 golang.org/x/crypto v0.0.0-20180904163835-0709b304e793/go.mod h1:6SG95UA2DQfeDnfUPMdvaQW0Q7yPrPDi9nlGo2tz2b4=
 golang.org/x/crypto v0.0.0-20190308221718-c2843e01d9a2 h1:VklqNMn3ovrHsnt90PveolxSbWFaJdECFbxSq0Mqo2M=
 golang.org/x/crypto v0.0.0-20190308221718-c2843e01d9a2/go.mod h1:djNgcEr1/C05ACkg1iLfiJU5Ep61QUkGW8qpdssI0+w=

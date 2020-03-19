@@ -64,7 +64,7 @@ require (
 	github.com/vishvananda/netlink v1.0.0 // indirect
 	github.com/vishvananda/netns v0.0.0-20180720170159-13995c7128cc // indirect
 	go.etcd.io/bbolt v1.3.2
-	go.undefinedlabs.com/scopeagent v0.1.13-0.20200317152908-a53991734a62
+	go.undefinedlabs.com/scopeagent v0.1.13
 	golang.org/x/crypto v0.0.0-20200317142112-1b76d66859c6
 	golang.org/x/net v0.0.0-20200301022130-244492dfa37a
 	golang.org/x/sync v0.0.0-20200317015054-43a5402ce75a
