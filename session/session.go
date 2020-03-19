@@ -2,7 +2,6 @@ package session
 
 import (
 	"context"
-	scopegrpc "go.undefinedlabs.com/scopeagent/instrumentation/grpc"
 	"net"
 	"strings"
 
@@ -54,8 +53,6 @@ func NewSession(ctx context.Context, name, sharedKey string) (*Session, error) {
 			grpc.UnaryInterceptor(otgrpc.OpenTracingServerInterceptor(tracer, traceFilter())),
 		}
 	}
-
-	serverOpts = append(serverOpts, scopegrpc.GetServerInterceptors()...)
 
 	s := &Session{
 		id:         id,
