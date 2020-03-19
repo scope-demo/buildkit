@@ -295,7 +295,7 @@ go.opencensus.io/internal
 go.opencensus.io/trace
 go.opencensus.io/trace/internal
 go.opencensus.io/trace/tracestate
-# go.undefinedlabs.com/scopeagent v0.1.13-0.20200317152908-a53991734a62
+# go.undefinedlabs.com/scopeagent v0.1.13
 go.undefinedlabs.com/scopeagent
 go.undefinedlabs.com/scopeagent/agent
 go.undefinedlabs.com/scopeagent/ast
@@ -303,7 +303,6 @@ go.undefinedlabs.com/scopeagent/autoinstrument
 go.undefinedlabs.com/scopeagent/env
 go.undefinedlabs.com/scopeagent/errors
 go.undefinedlabs.com/scopeagent/instrumentation
-go.undefinedlabs.com/scopeagent/instrumentation/grpc
 go.undefinedlabs.com/scopeagent/instrumentation/logging
 go.undefinedlabs.com/scopeagent/instrumentation/testing
 go.undefinedlabs.com/scopeagent/reflection
