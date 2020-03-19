@@ -1,7 +1,7 @@
 package solver
 
 import (
-	"context"
+	"go.undefinedlabs.com/scopeagent"
 	"testing"
 	"time"
 
@@ -38,7 +38,7 @@ func expKey(k *CacheKey) ExportableCacheKey {
 }
 
 func TestInMemoryCache(t *testing.T) {
-	ctx := context.TODO()
+	ctx := scopeagent.GetContextFromTest(t)
 
 	m := NewInMemoryCacheManager()
 
@@ -151,7 +151,7 @@ func TestInMemoryCache(t *testing.T) {
 }
 
 func TestInMemoryCacheSelector(t *testing.T) {
-	ctx := context.TODO()
+	ctx := scopeagent.GetContextFromTest(t)
 
 	m := NewInMemoryCacheManager()
 
@@ -185,7 +185,7 @@ func TestInMemoryCacheSelector(t *testing.T) {
 }
 
 func TestInMemoryCacheSelectorNested(t *testing.T) {
-	ctx := context.TODO()
+	ctx := scopeagent.GetContextFromTest(t)
 
 	m := NewInMemoryCacheManager()
 

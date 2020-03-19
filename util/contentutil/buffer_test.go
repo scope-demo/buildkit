@@ -2,7 +2,7 @@ package contentutil
 
 import (
 	"bytes"
-	"context"
+	"go.undefinedlabs.com/scopeagent"
 	"io"
 	"testing"
 
@@ -16,7 +16,7 @@ import (
 
 func TestReadWrite(t *testing.T) {
 	t.Parallel()
-	ctx := context.TODO()
+	ctx := scopeagent.GetContextFromTest(t)
 
 	b := NewBuffer()
 
@@ -46,7 +46,7 @@ func TestReadWrite(t *testing.T) {
 
 func TestReaderAt(t *testing.T) {
 	t.Parallel()
-	ctx := context.TODO()
+	ctx := scopeagent.GetContextFromTest(t)
 
 	b := NewBuffer()
 

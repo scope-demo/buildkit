@@ -1,7 +1,7 @@
 package content
 
 import (
-	"context"
+	"go.undefinedlabs.com/scopeagent"
 	"io/ioutil"
 	"os"
 	"testing"
@@ -18,7 +18,7 @@ import (
 )
 
 func TestContentAttachable(t *testing.T) {
-	ctx := context.TODO()
+	ctx := scopeagent.GetContextFromTest(t)
 	t.Parallel()
 	ids := []string{"store-id-0", "store-id-1"}
 	attachableStores := make(map[string]content.Store)

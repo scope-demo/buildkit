@@ -2,6 +2,7 @@ package filesync
 
 import (
 	"context"
+	"go.undefinedlabs.com/scopeagent"
 	"io/ioutil"
 	"path/filepath"
 	"testing"
@@ -14,7 +15,7 @@ import (
 )
 
 func TestFileSyncIncludePatterns(t *testing.T) {
-	ctx := context.TODO()
+	ctx := scopeagent.GetContextFromTest(t)
 	t.Parallel()
 	tmpDir, err := ioutil.TempDir("", "fsynctest")
 	require.NoError(t, err)

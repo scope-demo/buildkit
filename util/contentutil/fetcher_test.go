@@ -3,6 +3,7 @@ package contentutil
 import (
 	"bytes"
 	"context"
+	"go.undefinedlabs.com/scopeagent"
 	"io"
 	"testing"
 	"time"
@@ -15,7 +16,7 @@ import (
 
 func TestFetcher(t *testing.T) {
 	t.Parallel()
-	ctx := context.TODO()
+	ctx := scopeagent.GetContextFromTest(t)
 
 	b0 := NewBuffer()
 
@@ -50,7 +51,7 @@ func TestFetcher(t *testing.T) {
 
 func TestSlowFetch(t *testing.T) {
 	t.Parallel()
-	ctx := context.TODO()
+	ctx := scopeagent.GetContextFromTest(t)
 
 	f := &dummySlowFetcher{}
 	p := FromFetcher(f)

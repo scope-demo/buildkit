@@ -8,6 +8,7 @@ import (
 	"net"
 	"time"
 
+	scopegrpc "go.undefinedlabs.com/scopeagent/instrumentation/grpc"
 	"github.com/grpc-ecosystem/grpc-opentracing/go/otgrpc"
 	controlapi "github.com/moby/buildkit/api/services/control"
 	"github.com/moby/buildkit/client/connhelper"
@@ -50,6 +51,8 @@ func New(ctx context.Context, address string, opts ...ClientOpt) (*Client, error
 			gopts = append(gopts, grpc.WithDialer(wd.dialer))
 			needDialer = false
 		}
+
+		gopts = append(gopts, scopegrpc.GetClientInterceptors()...)
 	}
 	if needDialer {
 		dialFn, err := resolveDialer(address)

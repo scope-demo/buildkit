@@ -3,10 +3,10 @@
 package dockerfile
 
 import (
-	"context"
 	"os"
 	"testing"
 
+	"go.undefinedlabs.com/scopeagent"
 	"github.com/containerd/continuity/fs/fstest"
 	"github.com/moby/buildkit/client"
 	"github.com/moby/buildkit/frontend/dockerfile/builder"
@@ -38,11 +38,11 @@ RUN --mount=type=secret,required=false,mode=741,uid=100,gid=102,target=/mysecret
 	require.NoError(t, err)
 	defer os.RemoveAll(dir)
 
-	c, err := client.New(context.TODO(), sb.Address())
+	c, err := client.New(scopeagent.GetContextFromTest(t), sb.Address())
 	require.NoError(t, err)
 	defer c.Close()
 
-	_, err = f.Solve(context.TODO(), c, client.SolveOpt{
+	_, err = f.Solve(scopeagent.GetContextFromTest(t), c, client.SolveOpt{
 		LocalDirs: map[string]string{
 			builder.DefaultLocalNameDockerfile: dir,
 			builder.DefaultLocalNameContext:    dir,
