@@ -51,8 +51,6 @@ func New(ctx context.Context, address string, opts ...ClientOpt) (*Client, error
 			gopts = append(gopts, grpc.WithDialer(wd.dialer))
 			needDialer = false
 		}
-
-		gopts = append(gopts, scopegrpc.GetClientInterceptors()...)
 	}
 	if needDialer {
 		dialFn, err := resolveDialer(address)
@@ -69,6 +67,8 @@ func New(ctx context.Context, address string, opts ...ClientOpt) (*Client, error
 	if address == "" {
 		address = appdefaults.Address
 	}
+
+	gopts = append(gopts, scopegrpc.GetClientInterceptors()...)
 	conn, err := grpc.DialContext(ctx, address, gopts...)
 	if err != nil {
 		return nil, errors.Wrapf(err, "failed to dial %q . make sure buildkitd is running", address)
