@@ -45,13 +45,13 @@ jobs:
         - provider: script
           script: ./hack/images master $REPO_SLUG_TARGET push
           on:
-            repo: moby/buildkit
+            repo: drodriguezh/buildkit
             branch: master
             condition: $TRAVIS_EVENT_TYPE != "cron"
         - provider: script
           script: ./hack/images $TRAVIS_TAG $REPO_SLUG_TARGET push && PLATFORMS="${PLATFORMS},darwin/amd64,windows/amd64" ./hack/release-tar $TRAVIS_TAG release-out
           on:
-            repo: moby/buildkit
+            repo: drodriguezh/buildkit
             tags: true
             condition: $TRAVIS_TAG =~ ^v[0-9]
         - provider: releases
@@ -61,31 +61,31 @@ jobs:
           skip_cleanup: true
           file_glob: true
           on:
-           repo: moby/buildkit
+           repo: drodriguezh/buildkit
            tags: true
            condition: $TRAVIS_TAG =~ ^v[0-9]
         - provider: script
           script: ./frontend/dockerfile/cmd/dockerfile-frontend/hack/release master mainline $DF_REPO_SLUG_TARGET push
           on:
-            repo: moby/buildkit
+            repo: drodriguezh/buildkit
             branch: master
             condition: $TRAVIS_EVENT_TYPE != "cron"
         - provider: script
           script: ./frontend/dockerfile/cmd/dockerfile-frontend/hack/release master experimental $DF_REPO_SLUG_TARGET push
           on:
-            repo: moby/buildkit
+            repo: drodriguezh/buildkit
             branch: master
             condition: $TRAVIS_EVENT_TYPE != "cron"
         - provider: script
           script: ./frontend/dockerfile/cmd/dockerfile-frontend/hack/release tag $TRAVIS_TAG $DF_REPO_SLUG_TARGET push
           on:
-            repo: moby/buildkit
+            repo: drodriguezh/buildkit
             tags: true
             condition: $TRAVIS_TAG =~ ^dockerfile/[0-9]
         - provider: script
           script: ./frontend/dockerfile/cmd/dockerfile-frontend/hack/release daily _ $DF_REPO_SLUG_TARGET push
           on:
-            repo: moby/buildkit
+            repo: drodriguezh/buildkit
             branch: master
             condition: $TRAVIS_EVENT_TYPE == "cron"
       

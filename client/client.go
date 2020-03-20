@@ -6,15 +6,16 @@ import (
 	"crypto/x509"
 	"io/ioutil"
 	"net"
+	"os"
 	"time"
 
-	scopegrpc "go.undefinedlabs.com/scopeagent/instrumentation/grpc"
 	"github.com/grpc-ecosystem/grpc-opentracing/go/otgrpc"
 	controlapi "github.com/moby/buildkit/api/services/control"
 	"github.com/moby/buildkit/client/connhelper"
 	"github.com/moby/buildkit/util/appdefaults"
 	opentracing "github.com/opentracing/opentracing-go"
 	"github.com/pkg/errors"
+	scopegrpc "go.undefinedlabs.com/scopeagent/instrumentation/grpc"
 	"google.golang.org/grpc"
 	"google.golang.org/grpc/credentials"
 )
@@ -68,7 +69,11 @@ func New(ctx context.Context, address string, opts ...ClientOpt) (*Client, error
 		address = appdefaults.Address
 	}
 
-	gopts = append(gopts, scopegrpc.GetClientInterceptors()...)
+	//If Scope is running...
+	if scopeDsn := os.Getenv("SCOPE_DSN"); scopeDsn != "" {
+		gopts = append(gopts, scopegrpc.GetClientInterceptors()...)
+	}
+
 	conn, err := grpc.DialContext(ctx, address, gopts...)
 	if err != nil {
 		return nil, errors.Wrapf(err, "failed to dial %q . make sure buildkitd is running", address)

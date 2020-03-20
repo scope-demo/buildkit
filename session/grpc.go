@@ -6,7 +6,6 @@ import (
 	"sync/atomic"
 	"time"
 
-	scopegrpc "go.undefinedlabs.com/scopeagent/instrumentation/grpc"
 	"github.com/grpc-ecosystem/grpc-opentracing/go/otgrpc"
 	opentracing "github.com/opentracing/opentracing-go"
 	"github.com/pkg/errors"
@@ -46,8 +45,6 @@ func grpcClientConn(ctx context.Context, conn net.Conn) (context.Context, *grpc.
 			grpc.WithStreamInterceptor(otgrpc.OpenTracingStreamClientInterceptor(tracer, traceFilter())),
 		)
 	}
-
-	dialOpts = append(dialOpts, scopegrpc.GetClientInterceptors()...)
 
 	cc, err := grpc.DialContext(ctx, "", dialOpts...)
 	if err != nil {

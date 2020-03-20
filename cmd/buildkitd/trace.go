@@ -26,6 +26,7 @@ func init() {
 	if scopeDsn := os.Getenv("SCOPE_DSN"); scopeDsn != "" {
 		tracer = instrumentation.Tracer()
 		closeTracer = &nopCloser{}
+
 	} else if traceAddr := os.Getenv("JAEGER_TRACE"); traceAddr != "" {
 		tr, err := jaeger.NewUDPTransport(traceAddr, 0)
 		if err != nil {
