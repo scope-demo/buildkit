@@ -305,6 +305,7 @@ go.undefinedlabs.com/scopeagent/errors
 go.undefinedlabs.com/scopeagent/instrumentation
 go.undefinedlabs.com/scopeagent/instrumentation/grpc
 go.undefinedlabs.com/scopeagent/instrumentation/logging
+go.undefinedlabs.com/scopeagent/instrumentation/process
 go.undefinedlabs.com/scopeagent/instrumentation/testing
 go.undefinedlabs.com/scopeagent/reflection
 go.undefinedlabs.com/scopeagent/runner

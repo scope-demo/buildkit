@@ -5,6 +5,9 @@ import (
 	"crypto/tls"
 	"crypto/x509"
 	"fmt"
+	"github.com/opentracing/opentracing-go"
+	"go.undefinedlabs.com/scopeagent/agent"
+	"go.undefinedlabs.com/scopeagent/instrumentation/process"
 	"io/ioutil"
 	"net"
 	"os"
@@ -15,6 +18,7 @@ import (
 	"strings"
 	"time"
 
+	scopegrpc "go.undefinedlabs.com/scopeagent/instrumentation/grpc"
 	"github.com/BurntSushi/toml"
 	"github.com/containerd/containerd/pkg/seed"
 	"github.com/containerd/containerd/platforms"
@@ -24,7 +28,7 @@ import (
 	"github.com/docker/docker/pkg/reexec"
 	"github.com/docker/go-connections/sockets"
 	"github.com/gofrs/flock"
-	"github.com/grpc-ecosystem/grpc-opentracing/go/otgrpc"
+	//"github.com/grpc-ecosystem/grpc-opentracing/go/otgrpc"
 	"github.com/moby/buildkit/cache/remotecache"
 	inlineremotecache "github.com/moby/buildkit/cache/remotecache/inline"
 	localremotecache "github.com/moby/buildkit/cache/remotecache/local"
@@ -174,12 +178,24 @@ func main() {
 	app.Flags = append(app.Flags, appFlags...)
 
 	app.Action = func(c *cli.Context) error {
+		if scopeDsn := os.Getenv("SCOPE_DSN"); scopeDsn != "" {
+			scopeAgent, err := agent.NewAgent()
+			if err != nil {
+				panic(err)
+			}
+			defer scopeAgent.Stop()
+		}
+
 		// TODO: On Windows this always returns -1. The actual "are you admin" check is very Windows-specific.
 		// See https://github.com/golang/go/issues/28804#issuecomment-505326268 for the "short" version.
 		if os.Geteuid() > 0 {
 			return errors.New("rootless mode requires to be executed as the mapped root in a user namespace; you may use RootlessKit for setting up the namespace")
 		}
-		ctx, cancel := context.WithCancel(appcontext.Context())
+
+		span, _ := process.StartSpanFromContext(context.TODO(), "buildkitd")
+		defer span.Finish()
+
+		ctx, cancel := context.WithCancel(opentracing.ContextWithSpan(appcontext.Context(), span))
 		defer cancel()
 
 		cfg, md, err := config.LoadFile(c.GlobalString("config"))
@@ -201,7 +217,10 @@ func main() {
 				return err
 			}
 		}
-		opts := []grpc.ServerOption{unaryInterceptor(ctx), grpc.StreamInterceptor(otgrpc.OpenTracingStreamServerInterceptor(tracer))}
+
+
+		//opts := []grpc.ServerOption{unaryInterceptor(ctx), grpc.StreamInterceptor(otgrpc.OpenTracingStreamServerInterceptor(tracer))}
+		opts := []grpc.ServerOption{unaryInterceptor(ctx), grpc.StreamInterceptor(scopegrpc.OpenTracingStreamServerInterceptor(tracer))}
 		server := grpc.NewServer(opts...)
 
 		// relative path does not work with nightlyone/lockfile
@@ -514,7 +533,8 @@ func getListener(addr string, uid, gid int, tlsConfig *tls.Config) (net.Listener
 }
 
 func unaryInterceptor(globalCtx context.Context) grpc.ServerOption {
-	withTrace := otgrpc.OpenTracingServerInterceptor(tracer, otgrpc.LogPayloads())
+	//withTrace := otgrpc.OpenTracingServerInterceptor(tracer, otgrpc.LogPayloads())
+	withTrace := scopegrpc.OpenTracingServerInterceptor(tracer)
 
 	return grpc.UnaryInterceptor(func(ctx context.Context, req interface{}, info *grpc.UnaryServerInfo, handler grpc.UnaryHandler) (resp interface{}, err error) {
 		ctx, cancel := context.WithCancel(ctx)
