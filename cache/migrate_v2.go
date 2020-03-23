@@ -2,6 +2,7 @@ package cache
 
 import (
 	"context"
+	"github.com/opencontainers/go-digest"
 	"io"
 	"os"
 	"time"

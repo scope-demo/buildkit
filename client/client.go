@@ -4,9 +4,9 @@ import (
 	"context"
 	"crypto/tls"
 	"crypto/x509"
+	"go.undefinedlabs.com/scopeagent/env"
 	"io/ioutil"
 	"net"
-	"os"
 	"time"
 
 	"github.com/grpc-ecosystem/grpc-opentracing/go/otgrpc"
@@ -70,7 +70,7 @@ func New(ctx context.Context, address string, opts ...ClientOpt) (*Client, error
 	}
 
 	//If Scope is running...
-	if scopeDsn := os.Getenv("SCOPE_DSN"); scopeDsn != "" {
+	if env.ScopeDsn.Value != "" {
 		gopts = append(gopts, scopegrpc.GetClientInterceptors()...)
 	}
 

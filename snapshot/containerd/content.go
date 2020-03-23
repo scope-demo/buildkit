@@ -2,6 +2,7 @@ package containerd
 
 import (
 	"context"
+	"github.com/opencontainers/go-digest"
 
 	"github.com/containerd/containerd/content"
 	"github.com/containerd/containerd/namespaces"

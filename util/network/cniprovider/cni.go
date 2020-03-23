@@ -2,6 +2,7 @@ package cniprovider
 
 import (
 	"context"
+	"github.com/containerd/go-cni"
 	"os"
 	"path/filepath"
 	"syscall"

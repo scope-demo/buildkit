@@ -2,6 +2,7 @@ package common
 
 import (
 	"context"
+	"go.undefinedlabs.com/scopeagent/env"
 	"io"
 	"os"
 	"strings"
@@ -17,7 +18,7 @@ import (
 )
 
 func getTracer() (opentracing.Tracer, io.Closer) {
-	if scopeDsn := os.Getenv("SCOPE_DSN"); scopeDsn != "" {
+	if env.ScopeDsn.Value != "" {
 		scopeTracer := instrumentation.Tracer()
 		return scopeTracer, &nopCloser{}
 	}

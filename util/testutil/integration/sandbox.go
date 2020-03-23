@@ -5,6 +5,7 @@ import (
 	"bytes"
 	"context"
 	"fmt"
+	"go.undefinedlabs.com/scopeagent/env"
 	"io/ioutil"
 	"os"
 	"os/exec"
@@ -166,7 +167,7 @@ func runBuildkitd(conf *BackendConfig, args []string, logs map[string]*bytes.Buf
 	cmd := exec.Command(args[0], args[1:]...)
 
 	cmd.Env = append(os.Environ(), "SCOPE_SERVICE=builkitd_sandbox", "BUILDKIT_DEBUG_EXEC_OUTPUT=1", "BUILDKIT_DEBUG_PANIC_ON_ERROR=1", "TMPDIR="+filepath.Join(tmpdir, "tmp"))
-	if scopeDsn := os.Getenv("SCOPE_DSN"); scopeDsn != "" {
+	if env.ScopeDsn.Value != "" {
 		if conf.TestCtx != nil {
 			process.InjectToCmd(conf.TestCtx, cmd)
 		}

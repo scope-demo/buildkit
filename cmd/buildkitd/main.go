@@ -5,6 +5,8 @@ import (
 	"crypto/tls"
 	"crypto/x509"
 	"fmt"
+	"github.com/grpc-ecosystem/grpc-opentracing/go/otgrpc"
+	"go.undefinedlabs.com/scopeagent/env"
 	"io/ioutil"
 	"net"
 	"os"
@@ -15,9 +17,6 @@ import (
 	"strings"
 	"time"
 
-	"go.undefinedlabs.com/scopeagent/agent"
-	"go.undefinedlabs.com/scopeagent/instrumentation/process"
-
 	"github.com/BurntSushi/toml"
 	"github.com/containerd/containerd/pkg/seed"
 	"github.com/containerd/containerd/platforms"
@@ -27,6 +26,7 @@ import (
 	"github.com/docker/docker/pkg/reexec"
 	"github.com/docker/go-connections/sockets"
 	"github.com/gofrs/flock"
+	"go.undefinedlabs.com/scopeagent/agent"
 	scopegrpc "go.undefinedlabs.com/scopeagent/instrumentation/grpc"
 	//"github.com/grpc-ecosystem/grpc-opentracing/go/otgrpc"
 	"github.com/moby/buildkit/cache/remotecache"
@@ -178,7 +178,7 @@ func main() {
 	app.Flags = append(app.Flags, appFlags...)
 
 	app.Action = func(c *cli.Context) error {
-		if scopeDsn := os.Getenv("SCOPE_DSN"); scopeDsn != "" {
+		if env.ScopeDsn.Value != "" {
 			scopeAgent, err := agent.NewAgent()
 			if err != nil {
 				panic(err)
@@ -192,10 +192,7 @@ func main() {
 			return errors.New("rootless mode requires to be executed as the mapped root in a user namespace; you may use RootlessKit for setting up the namespace")
 		}
 
-		span, _ := process.StartSpanFromContext(context.TODO(), "buildkitd")
-		defer span.Finish()
-
-		ctx, cancel := context.WithCancel(opentracing.ContextWithSpan(appcontext.Context(), span))
+		ctx, cancel := context.WithCancel(appcontext.Context())
 		defer cancel()
 
 		cfg, md, err := config.LoadFile(c.GlobalString("config"))
@@ -219,7 +216,7 @@ func main() {
 		}
 
 		//opts := []grpc.ServerOption{unaryInterceptor(ctx), grpc.StreamInterceptor(otgrpc.OpenTracingStreamServerInterceptor(tracer))}
-		opts := []grpc.ServerOption{unaryInterceptor(ctx), grpc.StreamInterceptor(scopegrpc.OpenTracingStreamServerInterceptor(tracer))}
+		opts := []grpc.ServerOption{unaryInterceptor(ctx), streamInterceptor()}
 		server := grpc.NewServer(opts...)
 
 		// relative path does not work with nightlyone/lockfile
@@ -305,6 +302,8 @@ func main() {
 		os.Exit(1)
 	}
 }
+
+
 
 func serveGRPC(cfg config.GRPCConfig, server *grpc.Server, errCh chan error) error {
 	addrs := cfg.Address
@@ -532,8 +531,12 @@ func getListener(addr string, uid, gid int, tlsConfig *tls.Config) (net.Listener
 }
 
 func unaryInterceptor(globalCtx context.Context) grpc.ServerOption {
-	//withTrace := otgrpc.OpenTracingServerInterceptor(tracer, otgrpc.LogPayloads())
-	withTrace := scopegrpc.OpenTracingServerInterceptor(tracer)
+	var withTrace grpc.UnaryServerInterceptor
+	if env.ScopeDsn.Value != "" {
+		withTrace = scopegrpc.OpenTracingServerInterceptor(tracer)
+	} else {
+		withTrace = otgrpc.OpenTracingServerInterceptor(tracer, otgrpc.LogPayloads())
+	}
 
 	return grpc.UnaryInterceptor(func(ctx context.Context, req interface{}, info *grpc.UnaryServerInfo, handler grpc.UnaryHandler) (resp interface{}, err error) {
 		ctx, cancel := context.WithCancel(ctx)
@@ -553,6 +556,14 @@ func unaryInterceptor(globalCtx context.Context) grpc.ServerOption {
 		}
 		return
 	})
+}
+
+func streamInterceptor() grpc.ServerOption {
+	if env.ScopeDsn.Value != "" {
+		return grpc.StreamInterceptor(scopegrpc.OpenTracingStreamServerInterceptor(tracer))
+	}
+
+	return grpc.StreamInterceptor(otgrpc.OpenTracingStreamServerInterceptor(tracer))
 }
 
 func serverCredentials(cfg config.TLSConfig) (*tls.Config, error) {

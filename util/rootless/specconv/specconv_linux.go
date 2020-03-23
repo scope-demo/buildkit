@@ -1,6 +1,7 @@
 package specconv
 
 import (
+	"github.com/opencontainers/runtime-spec/specs-go"
 	"strings"
 )
 

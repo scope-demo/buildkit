@@ -4,6 +4,7 @@ import (
 	"io"
 	"os"
 
+	"go.undefinedlabs.com/scopeagent/env"
 	"go.undefinedlabs.com/scopeagent/instrumentation"
 
 	opentracing "github.com/opentracing/opentracing-go"
@@ -24,7 +25,7 @@ func init() {
 
 	tracer = opentracing.NoopTracer{}
 
-	if scopeDsn := os.Getenv("SCOPE_DSN"); scopeDsn != "" {
+	if env.ScopeDsn.Value != "" {
 		tracer = instrumentation.Tracer()
 		closeTracer = &nopCloser{}
 

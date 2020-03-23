@@ -3,6 +3,7 @@ package main
 import (
 	"context"
 	"encoding/json"
+	"github.com/opencontainers/go-digest"
 	"io"
 	"os"
 
