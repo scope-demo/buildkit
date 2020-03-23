@@ -183,6 +183,8 @@ func TestIntegration(t *testing.T) {
 }
 
 func testDefaultEnvWithArgs(t *testing.T, sb integration.Sandbox) {
+	scopeagent.SetTestCodeFromCaller(t)
+
 	f := getFrontend(t, sb)
 
 	dockerfile := []byte(`
@@ -248,6 +250,8 @@ echo -n $my_arg $1 > /out
 }
 
 func testEnvEmptyFormatting(t *testing.T, sb integration.Sandbox) {
+	scopeagent.SetTestCodeFromCaller(t)
+
 	f := getFrontend(t, sb)
 
 	dockerfile := []byte(`
@@ -286,6 +290,8 @@ RUN [ "$myenv" = 'foo%sbar' ]
 }
 
 func testDockerignoreOverride(t *testing.T, sb integration.Sandbox) {
+	scopeagent.SetTestCodeFromCaller(t)
+
 	f := getFrontend(t, sb)
 	dockerfile := []byte(`
 FROM busybox
@@ -343,6 +349,8 @@ foo
 }
 
 func testEmptyDestDir(t *testing.T, sb integration.Sandbox) {
+	scopeagent.SetTestCodeFromCaller(t)
+
 	f := getFrontend(t, sb)
 	isFileOp := getFileOp(t, sb)
 
@@ -377,6 +385,8 @@ RUN [ "$(cat testfile)" == "contents0" ]
 }
 
 func testTarExporter(t *testing.T, sb integration.Sandbox) {
+	scopeagent.SetTestCodeFromCaller(t)
+
 	f := getFrontend(t, sb)
 
 	dockerfile := []byte(`
@@ -455,6 +465,8 @@ FROM stage-$TARGETOS
 }
 
 func testWorkdirCreatesDir(t *testing.T, sb integration.Sandbox) {
+	scopeagent.SetTestCodeFromCaller(t)
+
 	f := getFrontend(t, sb)
 
 	dockerfile := []byte(`
@@ -497,6 +509,8 @@ WORKDIR /
 }
 
 func testCacheReleased(t *testing.T, sb integration.Sandbox) {
+	scopeagent.SetTestCodeFromCaller(t)
+
 	f := getFrontend(t, sb)
 
 	dockerfile := []byte(`
@@ -533,6 +547,8 @@ FROM busybox
 }
 
 func testSymlinkedDockerfile(t *testing.T, sb integration.Sandbox) {
+	scopeagent.SetTestCodeFromCaller(t)
+
 	f := getFrontend(t, sb)
 
 	dockerfile := []byte(`
@@ -561,6 +577,8 @@ ENV foo bar
 }
 
 func testCopyChownExistingDir(t *testing.T, sb integration.Sandbox) {
+	scopeagent.SetTestCodeFromCaller(t)
+
 	f := getFrontend(t, sb)
 
 	dockerfile := []byte(`
@@ -655,6 +673,8 @@ RUN e="300:400"; p="/file"                         ; a=` + "`" + `stat -c "%u:%g
 }
 
 func testCopyWildcardCache(t *testing.T, sb integration.Sandbox) {
+	scopeagent.SetTestCodeFromCaller(t)
+
 	f := getFrontend(t, sb)
 
 	dockerfile := []byte(`
@@ -752,6 +772,8 @@ COPY --from=base unique /
 }
 
 func testEmptyWildcard(t *testing.T, sb integration.Sandbox) {
+	scopeagent.SetTestCodeFromCaller(t)
+
 	f := getFrontend(t, sb)
 
 	dockerfile := []byte(`
@@ -794,6 +816,8 @@ COPY foo nomatch* /
 }
 
 func testWorkdirUser(t *testing.T, sb integration.Sandbox) {
+	scopeagent.SetTestCodeFromCaller(t)
+
 	f := getFrontend(t, sb)
 	isFileOp := getFileOp(t, sb)
 
@@ -828,6 +852,8 @@ RUN [ "$(stat -c "%U %G" /mydir)" == "user user" ]
 }
 
 func testWorkdirCopyIgnoreRelative(t *testing.T, sb integration.Sandbox) {
+	scopeagent.SetTestCodeFromCaller(t)
+
 	f := getFrontend(t, sb)
 	isFileOp := getFileOp(t, sb)
 
@@ -863,6 +889,8 @@ COPY --from=base Dockerfile .
 }
 
 func testWorkdirExists(t *testing.T, sb integration.Sandbox) {
+	scopeagent.SetTestCodeFromCaller(t)
+
 	f := getFrontend(t, sb)
 	isFileOp := getFileOp(t, sb)
 
@@ -897,6 +925,8 @@ RUN [ "$(stat -c "%U %G" /mydir)" == "user user" ]
 }
 
 func testCopyChownCreateDest(t *testing.T, sb integration.Sandbox) {
+	scopeagent.SetTestCodeFromCaller(t)
+
 	f := getFrontend(t, sb)
 	isFileOp := getFileOp(t, sb)
 
@@ -936,6 +966,8 @@ RUN [ "$(stat -c "%U %G" /dest01)" == "user01 user" ]
 }
 
 func testCopyThroughSymlinkContext(t *testing.T, sb integration.Sandbox) {
+	scopeagent.SetTestCodeFromCaller(t)
+
 	f := getFrontend(t, sb)
 	isFileOp := getFileOp(t, sb)
 
@@ -984,6 +1016,8 @@ COPY link/foo .
 }
 
 func testCopyThroughSymlinkMultiStage(t *testing.T, sb integration.Sandbox) {
+	scopeagent.SetTestCodeFromCaller(t)
+
 	f := getFrontend(t, sb)
 	isFileOp := getFileOp(t, sb)
 
@@ -1032,6 +1066,8 @@ COPY --from=build /sub2/foo bar
 }
 
 func testCopySocket(t *testing.T, sb integration.Sandbox) {
+	scopeagent.SetTestCodeFromCaller(t)
+
 	f := getFrontend(t, sb)
 	isFileOp := getFileOp(t, sb)
 
@@ -1079,6 +1115,8 @@ COPY . /
 }
 
 func testIgnoreEntrypoint(t *testing.T, sb integration.Sandbox) {
+	scopeagent.SetTestCodeFromCaller(t)
+
 	f := getFrontend(t, sb)
 
 	dockerfile := []byte(`
@@ -1107,6 +1145,8 @@ RUN ["ls"]
 }
 
 func testQuotedMetaArgs(t *testing.T, sb integration.Sandbox) {
+	scopeagent.SetTestCodeFromCaller(t)
+
 	f := getFrontend(t, sb)
 
 	dockerfile := []byte(`
@@ -1154,6 +1194,8 @@ COPY --from=build /out .
 }
 
 func testExportMultiPlatform(t *testing.T, sb integration.Sandbox) {
+	scopeagent.SetTestCodeFromCaller(t)
+
 	f := getFrontend(t, sb)
 
 	dockerfile := []byte(`
@@ -1294,6 +1336,8 @@ COPY arch-$TARGETARCH whoami
 
 // tonistiigi/fsutil#46
 func testContextChangeDirToFile(t *testing.T, sb integration.Sandbox) {
+	scopeagent.SetTestCodeFromCaller(t)
+
 	f := getFrontend(t, sb)
 	isFileOp := getFileOp(t, sb)
 
@@ -1359,6 +1403,8 @@ COPY foo /
 }
 
 func testNoSnapshotLeak(t *testing.T, sb integration.Sandbox) {
+	scopeagent.SetTestCodeFromCaller(t)
+
 	f := getFrontend(t, sb)
 	isFileOp := getFileOp(t, sb)
 
@@ -1411,6 +1457,8 @@ COPY foo /
 
 // #1197
 func testCopyFollowAllSymlinks(t *testing.T, sb integration.Sandbox) {
+	scopeagent.SetTestCodeFromCaller(t)
+
 	f := getFrontend(t, sb)
 	isFileOp := getFileOp(t, sb)
 
@@ -1450,6 +1498,8 @@ COPY foo/sub bar
 }
 
 func testCopySymlinks(t *testing.T, sb integration.Sandbox) {
+	scopeagent.SetTestCodeFromCaller(t)
+
 	f := getFrontend(t, sb)
 	isFileOp := getFileOp(t, sb)
 
@@ -1517,6 +1567,8 @@ COPY sub/l* alllinks/
 }
 
 func testHTTPDockerfile(t *testing.T, sb integration.Sandbox) {
+	scopeagent.SetTestCodeFromCaller(t)
+
 	f := getFrontend(t, sb)
 
 	dockerfile := []byte(`
