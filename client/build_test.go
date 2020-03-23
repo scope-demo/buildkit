@@ -2,11 +2,12 @@ package client
 
 import (
 	"context"
-	"go.undefinedlabs.com/scopeagent"
 	"io/ioutil"
 	"os"
 	"path/filepath"
 	"testing"
+
+	"go.undefinedlabs.com/scopeagent"
 
 	"github.com/moby/buildkit/client/llb"
 	"github.com/moby/buildkit/frontend/gateway/client"

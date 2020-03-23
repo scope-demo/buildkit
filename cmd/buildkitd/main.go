@@ -5,9 +5,6 @@ import (
 	"crypto/tls"
 	"crypto/x509"
 	"fmt"
-	"github.com/opentracing/opentracing-go"
-	"go.undefinedlabs.com/scopeagent/agent"
-	"go.undefinedlabs.com/scopeagent/instrumentation/process"
 	"io/ioutil"
 	"net"
 	"os"
@@ -18,7 +15,9 @@ import (
 	"strings"
 	"time"
 
-	scopegrpc "go.undefinedlabs.com/scopeagent/instrumentation/grpc"
+	"go.undefinedlabs.com/scopeagent/agent"
+	"go.undefinedlabs.com/scopeagent/instrumentation/process"
+
 	"github.com/BurntSushi/toml"
 	"github.com/containerd/containerd/pkg/seed"
 	"github.com/containerd/containerd/platforms"
@@ -28,6 +27,7 @@ import (
 	"github.com/docker/docker/pkg/reexec"
 	"github.com/docker/go-connections/sockets"
 	"github.com/gofrs/flock"
+	scopegrpc "go.undefinedlabs.com/scopeagent/instrumentation/grpc"
 	//"github.com/grpc-ecosystem/grpc-opentracing/go/otgrpc"
 	"github.com/moby/buildkit/cache/remotecache"
 	inlineremotecache "github.com/moby/buildkit/cache/remotecache/inline"
@@ -217,7 +217,6 @@ func main() {
 				return err
 			}
 		}
-
 
 		//opts := []grpc.ServerOption{unaryInterceptor(ctx), grpc.StreamInterceptor(otgrpc.OpenTracingStreamServerInterceptor(tracer))}
 		opts := []grpc.ServerOption{unaryInterceptor(ctx), grpc.StreamInterceptor(scopegrpc.OpenTracingStreamServerInterceptor(tracer))}

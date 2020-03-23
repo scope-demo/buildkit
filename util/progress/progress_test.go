@@ -3,10 +3,11 @@ package progress
 import (
 	"context"
 	"fmt"
-	"go.undefinedlabs.com/scopeagent"
 	"io"
 	"testing"
 	"time"
+
+	"go.undefinedlabs.com/scopeagent"
 
 	"github.com/stretchr/testify/assert"
 	"golang.org/x/sync/errgroup"

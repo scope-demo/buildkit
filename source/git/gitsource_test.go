@@ -2,13 +2,14 @@ package git
 
 import (
 	"context"
-	"go.undefinedlabs.com/scopeagent"
 	"io/ioutil"
 	"os"
 	"os/exec"
 	"path/filepath"
 	"strings"
 	"testing"
+
+	"go.undefinedlabs.com/scopeagent"
 
 	"github.com/containerd/containerd/content/local"
 	ctdmetadata "github.com/containerd/containerd/metadata"

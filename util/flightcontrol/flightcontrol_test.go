@@ -2,10 +2,11 @@ package flightcontrol
 
 import (
 	"context"
-	"go.undefinedlabs.com/scopeagent"
 	"sync/atomic"
 	"testing"
 	"time"
+
+	"go.undefinedlabs.com/scopeagent"
 
 	"github.com/pkg/errors"
 	"github.com/stretchr/testify/assert"

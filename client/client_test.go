@@ -9,7 +9,6 @@ import (
 	"encoding/json"
 	"encoding/pem"
 	"fmt"
-	"go.undefinedlabs.com/scopeagent"
 	"io"
 	"io/ioutil"
 	"net"
@@ -21,6 +20,8 @@ import (
 	"syscall"
 	"testing"
 	"time"
+
+	"go.undefinedlabs.com/scopeagent"
 
 	"github.com/containerd/containerd"
 	"github.com/containerd/containerd/content"

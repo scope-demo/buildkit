@@ -4,7 +4,6 @@ import (
 	"bytes"
 	"context"
 	"fmt"
-	"go.undefinedlabs.com/scopeagent"
 	"io/ioutil"
 	"math/rand"
 	"os"
@@ -18,6 +17,8 @@ import (
 	"syscall"
 	"testing"
 	"time"
+
+	"go.undefinedlabs.com/scopeagent"
 
 	"github.com/containerd/containerd/content"
 	"github.com/moby/buildkit/util/contentutil"
@@ -46,7 +47,7 @@ type Sandbox interface {
 type BackendConfig struct {
 	Logs       map[string]*bytes.Buffer
 	ConfigFile string
-	TestCtx context.Context
+	TestCtx    context.Context
 }
 
 type Worker interface {

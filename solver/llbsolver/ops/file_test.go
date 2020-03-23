@@ -2,10 +2,11 @@ package ops
 
 import (
 	"context"
-	"go.undefinedlabs.com/scopeagent"
 	"sync"
 	"sync/atomic"
 	"testing"
+
+	"go.undefinedlabs.com/scopeagent"
 
 	"github.com/moby/buildkit/solver/llbsolver/ops/fileoptypes"
 	"github.com/moby/buildkit/solver/pb"

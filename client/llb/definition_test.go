@@ -2,8 +2,9 @@ package llb
 
 import (
 	"bytes"
-	"go.undefinedlabs.com/scopeagent"
 	"testing"
+
+	"go.undefinedlabs.com/scopeagent"
 
 	"github.com/containerd/containerd/platforms"
 	"github.com/stretchr/testify/require"

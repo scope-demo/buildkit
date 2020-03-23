@@ -1,9 +1,10 @@
 package solver
 
 import (
-	"go.undefinedlabs.com/scopeagent"
 	"testing"
 	"time"
+
+	"go.undefinedlabs.com/scopeagent"
 
 	"github.com/moby/buildkit/identity"
 	digest "github.com/opencontainers/go-digest"

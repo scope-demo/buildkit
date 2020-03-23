@@ -9,12 +9,12 @@ import (
 	"strconv"
 	"testing"
 
-	"go.undefinedlabs.com/scopeagent"
 	"github.com/containerd/continuity/fs/fstest"
 	"github.com/moby/buildkit/client"
 	"github.com/moby/buildkit/frontend/dockerfile/builder"
 	"github.com/moby/buildkit/util/testutil/integration"
 	"github.com/stretchr/testify/require"
+	"go.undefinedlabs.com/scopeagent"
 )
 
 var mountTests = []integration.Test{

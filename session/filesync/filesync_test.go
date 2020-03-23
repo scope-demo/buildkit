@@ -2,10 +2,11 @@ package filesync
 
 import (
 	"context"
-	"go.undefinedlabs.com/scopeagent"
 	"io/ioutil"
 	"path/filepath"
 	"testing"
+
+	"go.undefinedlabs.com/scopeagent"
 
 	"github.com/moby/buildkit/session"
 	"github.com/moby/buildkit/session/testutil"

@@ -3,10 +3,11 @@ package contentutil
 import (
 	"bytes"
 	"context"
-	"go.undefinedlabs.com/scopeagent"
 	"io"
 	"testing"
 	"time"
+
+	"go.undefinedlabs.com/scopeagent"
 
 	"github.com/containerd/containerd/content"
 	digest "github.com/opencontainers/go-digest"

@@ -5,7 +5,6 @@ import (
 	"bytes"
 	"context"
 	"fmt"
-	"go.undefinedlabs.com/scopeagent/instrumentation/process"
 	"io/ioutil"
 	"os"
 	"os/exec"
@@ -15,6 +14,8 @@ import (
 	"syscall"
 	"testing"
 	"time"
+
+	"go.undefinedlabs.com/scopeagent/instrumentation/process"
 
 	"github.com/google/shlex"
 	"github.com/pkg/errors"
@@ -75,7 +76,7 @@ func (sb *sandbox) Value(k string) interface{} {
 
 func newSandbox(testCtx context.Context, w Worker, mirror string, mv matrixValue) (s Sandbox, cl func() error, err error) {
 	cfg := &BackendConfig{
-		Logs: make(map[string]*bytes.Buffer),
+		Logs:    make(map[string]*bytes.Buffer),
 		TestCtx: testCtx,
 	}
 

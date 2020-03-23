@@ -2,10 +2,11 @@ package common
 
 import (
 	"context"
-	"go.undefinedlabs.com/scopeagent/instrumentation"
 	"io"
 	"os"
 	"strings"
+
+	"go.undefinedlabs.com/scopeagent/instrumentation"
 
 	"github.com/moby/buildkit/util/appcontext"
 	opentracing "github.com/opentracing/opentracing-go"

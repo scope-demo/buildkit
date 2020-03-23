@@ -4,13 +4,14 @@ import (
 	"context"
 	_ "crypto/sha256"
 	"fmt"
-	"go.undefinedlabs.com/scopeagent"
 	"math"
 	"math/rand"
 	"os"
 	"sync/atomic"
 	"testing"
 	"time"
+
+	"go.undefinedlabs.com/scopeagent"
 
 	"github.com/moby/buildkit/identity"
 	digest "github.com/opencontainers/go-digest"

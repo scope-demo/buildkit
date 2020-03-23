@@ -2,8 +2,9 @@ package contentutil
 
 import (
 	"bytes"
-	"go.undefinedlabs.com/scopeagent"
 	"testing"
+
+	"go.undefinedlabs.com/scopeagent"
 
 	"github.com/containerd/containerd/content"
 	digest "github.com/opencontainers/go-digest"

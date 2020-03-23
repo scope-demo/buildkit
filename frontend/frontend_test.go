@@ -2,11 +2,12 @@ package frontend
 
 import (
 	"context"
-	"go.undefinedlabs.com/scopeagent"
 	"io/ioutil"
 	"os"
 	"path/filepath"
 	"testing"
+
+	"go.undefinedlabs.com/scopeagent"
 
 	"github.com/containerd/continuity/fs/fstest"
 	"github.com/moby/buildkit/client"

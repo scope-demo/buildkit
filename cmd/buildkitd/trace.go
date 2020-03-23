@@ -1,9 +1,10 @@
 package main
 
 import (
-	"go.undefinedlabs.com/scopeagent/instrumentation"
 	"io"
 	"os"
+
+	"go.undefinedlabs.com/scopeagent/instrumentation"
 
 	opentracing "github.com/opentracing/opentracing-go"
 	jaeger "github.com/uber/jaeger-client-go"

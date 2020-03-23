@@ -6,7 +6,6 @@ import (
 	"os"
 	"testing"
 
-	"go.undefinedlabs.com/scopeagent"
 	"github.com/containerd/continuity/fs/fstest"
 	"github.com/moby/buildkit/client"
 	"github.com/moby/buildkit/frontend/dockerfile/builder"
@@ -14,6 +13,7 @@ import (
 	"github.com/moby/buildkit/session/secrets/secretsprovider"
 	"github.com/moby/buildkit/util/testutil/integration"
 	"github.com/stretchr/testify/require"
+	"go.undefinedlabs.com/scopeagent"
 )
 
 var secretsTests = []integration.Test{

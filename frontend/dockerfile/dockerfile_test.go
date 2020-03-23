@@ -7,7 +7,6 @@ import (
 	"context"
 	"encoding/json"
 	"fmt"
-	"go.undefinedlabs.com/scopeagent"
 	"io"
 	"io/ioutil"
 	"net/http"
@@ -21,6 +20,8 @@ import (
 	"strings"
 	"testing"
 	"time"
+
+	"go.undefinedlabs.com/scopeagent"
 
 	"github.com/containerd/containerd"
 	"github.com/containerd/containerd/content"

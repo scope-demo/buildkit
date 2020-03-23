@@ -2,13 +2,14 @@ package ops
 
 import (
 	"context"
-	"go.undefinedlabs.com/scopeagent"
 	"io/ioutil"
 	"os"
 	"path/filepath"
 	"sync"
 	"testing"
 	"time"
+
+	"go.undefinedlabs.com/scopeagent"
 
 	"github.com/containerd/containerd/content"
 	"github.com/containerd/containerd/content/local"

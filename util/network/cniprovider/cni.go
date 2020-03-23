@@ -7,7 +7,6 @@ import (
 	"syscall"
 
 	"github.com/containerd/containerd/oci"
-	"github.com/containerd/go-cni"
 	"github.com/gofrs/flock"
 	"github.com/moby/buildkit/identity"
 	"github.com/moby/buildkit/util/network"

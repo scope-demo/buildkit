@@ -2,9 +2,10 @@ package contentutil
 
 import (
 	"bytes"
-	"go.undefinedlabs.com/scopeagent"
 	"io"
 	"testing"
+
+	"go.undefinedlabs.com/scopeagent"
 
 	"github.com/containerd/containerd/content"
 	"github.com/containerd/containerd/errdefs"
