@@ -1572,6 +1572,8 @@ COPY --from=0 /foo /foo
 }
 
 func testCmdShell(t *testing.T, sb integration.Sandbox) {
+	scopeagent.SetTestCodeFromCaller(t)
+
 	f := getFrontend(t, sb)
 
 	var cdAddress string
@@ -1668,6 +1670,8 @@ ENTRYPOINT my entrypoint
 }
 
 func testPullScratch(t *testing.T, sb integration.Sandbox) {
+	scopeagent.SetTestCodeFromCaller(t)
+
 	f := getFrontend(t, sb)
 
 	var cdAddress string
@@ -1800,6 +1804,8 @@ COPY foo .
 }
 
 func testGlobalArg(t *testing.T, sb integration.Sandbox) {
+	scopeagent.SetTestCodeFromCaller(t)
+
 	f := getFrontend(t, sb)
 
 	dockerfile := []byte(`
@@ -1830,6 +1836,8 @@ FROM busybox:${tag}
 }
 
 func testDockerfileDirs(t *testing.T, sb integration.Sandbox) {
+	scopeagent.SetTestCodeFromCaller(t)
+
 	f := getFrontend(t, sb)
 	f.RequiresBuildctl(t)
 
@@ -1898,6 +1906,8 @@ func testDockerfileDirs(t *testing.T, sb integration.Sandbox) {
 }
 
 func testDockerfileInvalidCommand(t *testing.T, sb integration.Sandbox) {
+	scopeagent.SetTestCodeFromCaller(t)
+
 	f := getFrontend(t, sb)
 	f.RequiresBuildctl(t)
 	dockerfile := []byte(`
@@ -1924,6 +1934,8 @@ func testDockerfileInvalidCommand(t *testing.T, sb integration.Sandbox) {
 }
 
 func testDockerfileADDFromURL(t *testing.T, sb integration.Sandbox) {
+	scopeagent.SetTestCodeFromCaller(t)
+
 	f := getFrontend(t, sb)
 	f.RequiresBuildctl(t)
 
@@ -2006,6 +2018,8 @@ ADD %s /dest/
 }
 
 func testDockerfileAddArchive(t *testing.T, sb integration.Sandbox) {
+	scopeagent.SetTestCodeFromCaller(t)
+
 	f := getFrontend(t, sb)
 	f.RequiresBuildctl(t)
 
@@ -2175,6 +2189,8 @@ ADD %s /newname.tar.gz
 }
 
 func testDockerfileAddArchiveWildcard(t *testing.T, sb integration.Sandbox) {
+	scopeagent.SetTestCodeFromCaller(t)
+
 	f := getFrontend(t, sb)
 
 	buf := bytes.NewBuffer(nil)
@@ -2252,6 +2268,8 @@ ADD *.tar /dest
 }
 
 func testSymlinkDestination(t *testing.T, sb integration.Sandbox) {
+	scopeagent.SetTestCodeFromCaller(t)
+
 	f := getFrontend(t, sb)
 	f.RequiresBuildctl(t)
 
@@ -2298,6 +2316,8 @@ COPY foo /symlink/
 }
 
 func testDockerfileScratchConfig(t *testing.T, sb integration.Sandbox) {
+	scopeagent.SetTestCodeFromCaller(t)
+
 	var cdAddress string
 	if cd, ok := sb.(interface {
 		ContainerdAddress() string
@@ -2369,6 +2389,8 @@ ENV foo=bar
 }
 
 func testExposeExpansion(t *testing.T, sb integration.Sandbox) {
+	scopeagent.SetTestCodeFromCaller(t)
+
 	f := getFrontend(t, sb)
 
 	dockerfile := []byte(`
@@ -2448,6 +2470,8 @@ EXPOSE 5000
 }
 
 func testDockerignore(t *testing.T, sb integration.Sandbox) {
+	scopeagent.SetTestCodeFromCaller(t)
+
 	f := getFrontend(t, sb)
 
 	dockerfile := []byte(`
@@ -2521,6 +2545,8 @@ Dockerfile
 }
 
 func testDockerignoreInvalid(t *testing.T, sb integration.Sandbox) {
+	scopeagent.SetTestCodeFromCaller(t)
+
 	f := getFrontend(t, sb)
 
 	dockerfile := []byte(`
@@ -2558,6 +2584,8 @@ COPY . .
 }
 
 func testExportedHistory(t *testing.T, sb integration.Sandbox) {
+	scopeagent.SetTestCodeFromCaller(t)
+
 	f := getFrontend(t, sb)
 	f.RequiresBuildctl(t)
 
@@ -2641,6 +2669,8 @@ RUN ["ls"]
 }
 
 func testUser(t *testing.T, sb integration.Sandbox) {
+	scopeagent.SetTestCodeFromCaller(t)
+
 	f := getFrontend(t, sb)
 
 	dockerfile := []byte(`
@@ -2789,6 +2819,8 @@ USER nobody
 }
 
 func testCopyChown(t *testing.T, sb integration.Sandbox) {
+	scopeagent.SetTestCodeFromCaller(t)
+
 	f := getFrontend(t, sb)
 	isFileOp := getFileOp(t, sb)
 
@@ -2856,6 +2888,8 @@ COPY --from=base /out /
 }
 
 func testCopyOverrideFiles(t *testing.T, sb integration.Sandbox) {
+	scopeagent.SetTestCodeFromCaller(t)
+
 	f := getFrontend(t, sb)
 	isFileOp := getFileOp(t, sb)
 
@@ -2915,6 +2949,8 @@ COPY files dest
 }
 
 func testCopyVarSubstitution(t *testing.T, sb integration.Sandbox) {
+	scopeagent.SetTestCodeFromCaller(t)
+
 	f := getFrontend(t, sb)
 	isFileOp := getFileOp(t, sb)
 
@@ -2963,6 +2999,8 @@ COPY $FOO baz
 }
 
 func testCopyWildcards(t *testing.T, sb integration.Sandbox) {
+	scopeagent.SetTestCodeFromCaller(t)
+
 	f := getFrontend(t, sb)
 	isFileOp := getFileOp(t, sb)
 
@@ -3060,6 +3098,8 @@ COPY sub/dir1 subdest6
 }
 
 func testCopyRelative(t *testing.T, sb integration.Sandbox) {
+	scopeagent.SetTestCodeFromCaller(t)
+
 	f := getFrontend(t, sb)
 	isFileOp := getFileOp(t, sb)
 
@@ -3111,6 +3151,8 @@ RUN sh -c "[ $(cat /test5/foo) = 'hello' ]"
 }
 
 func testDockerfileFromGit(t *testing.T, sb integration.Sandbox) {
+	scopeagent.SetTestCodeFromCaller(t)
+
 	f := getFrontend(t, sb)
 
 	gitDir, err := ioutil.TempDir("", "buildkit")
@@ -3211,6 +3253,8 @@ COPY --from=build foo bar2
 }
 
 func testDockerfileFromHTTP(t *testing.T, sb integration.Sandbox) {
+	scopeagent.SetTestCodeFromCaller(t)
+
 	f := getFrontend(t, sb)
 
 	buf := bytes.NewBuffer(nil)
@@ -3274,6 +3318,8 @@ COPY foo bar
 }
 
 func testMultiStageImplicitFrom(t *testing.T, sb integration.Sandbox) {
+	scopeagent.SetTestCodeFromCaller(t)
+
 	f := getFrontend(t, sb)
 
 	dockerfile := []byte(`
@@ -3353,6 +3399,8 @@ COPY --from=golang /usr/bin/go go
 }
 
 func testMultiStageCaseInsensitive(t *testing.T, sb integration.Sandbox) {
+	scopeagent.SetTestCodeFromCaller(t)
+
 	f := getFrontend(t, sb)
 
 	dockerfile := []byte(`
@@ -3401,6 +3449,8 @@ COPY --from=stage1 baz bax
 }
 
 func testLabels(t *testing.T, sb integration.Sandbox) {
+	scopeagent.SetTestCodeFromCaller(t)
+
 	f := getFrontend(t, sb)
 
 	dockerfile := []byte(`
@@ -3479,6 +3529,8 @@ LABEL foo=bar
 }
 
 func testOnBuildCleared(t *testing.T, sb integration.Sandbox) {
+	scopeagent.SetTestCodeFromCaller(t)
+
 	f := getFrontend(t, sb)
 
 	registry, err := sb.NewRegistry()
@@ -3586,6 +3638,8 @@ ONBUILD RUN mkdir -p /out && echo -n 11 >> /out/foo
 }
 
 func testCacheMultiPlatformImportExport(t *testing.T, sb integration.Sandbox) {
+	scopeagent.SetTestCodeFromCaller(t)
+
 	f := getFrontend(t, sb)
 
 	registry, err := sb.NewRegistry()
@@ -3711,6 +3765,8 @@ COPY --from=base arch /
 }
 
 func testCacheImportExport(t *testing.T, sb integration.Sandbox) {
+	scopeagent.SetTestCodeFromCaller(t)
+
 	f := getFrontend(t, sb)
 
 	registry, err := sb.NewRegistry()
@@ -3813,6 +3869,8 @@ COPY --from=base unique /
 }
 
 func testReproducibleIDs(t *testing.T, sb integration.Sandbox) {
+	scopeagent.SetTestCodeFromCaller(t)
+
 	f := getFrontend(t, sb)
 
 	dockerfile := []byte(`
@@ -3886,6 +3944,8 @@ RUN echo bar > bar
 }
 
 func testImportExportReproducibleIDs(t *testing.T, sb integration.Sandbox) {
+	scopeagent.SetTestCodeFromCaller(t)
+
 	var cdAddress string
 	if cd, ok := sb.(interface {
 		ContainerdAddress() string
@@ -3984,6 +4044,8 @@ RUN echo bar > bar
 }
 
 func testNoCache(t *testing.T, sb integration.Sandbox) {
+	scopeagent.SetTestCodeFromCaller(t)
+
 	f := getFrontend(t, sb)
 
 	dockerfile := []byte(`
@@ -4072,6 +4134,8 @@ COPY --from=s1 unique2 /
 }
 
 func testPlatformArgsImplicit(t *testing.T, sb integration.Sandbox) {
+	scopeagent.SetTestCodeFromCaller(t)
+
 	f := getFrontend(t, sb)
 
 	dockerfile := []byte(fmt.Sprintf(`
@@ -4123,6 +4187,8 @@ COPY foo2 bar2
 }
 
 func testPlatformArgsExplicit(t *testing.T, sb integration.Sandbox) {
+	scopeagent.SetTestCodeFromCaller(t)
+
 	f := getFrontend(t, sb)
 
 	dockerfile := []byte(`
@@ -4178,6 +4244,8 @@ COPY --from=build out .
 }
 
 func testBuiltinArgs(t *testing.T, sb integration.Sandbox) {
+	scopeagent.SetTestCodeFromCaller(t)
+
 	f := getFrontend(t, sb)
 
 	dockerfile := []byte(`
@@ -4289,6 +4357,8 @@ COPY --from=build /out /
 }
 
 func testTarContext(t *testing.T, sb integration.Sandbox) {
+	scopeagent.SetTestCodeFromCaller(t)
+
 	f := getFrontend(t, sb)
 	isFileOp := getFileOp(t, sb)
 
@@ -4340,6 +4410,8 @@ COPY foo /
 }
 
 func testTarContextExternalDockerfile(t *testing.T, sb integration.Sandbox) {
+	scopeagent.SetTestCodeFromCaller(t)
+
 	f := getFrontend(t, sb)
 	isFileOp := getFileOp(t, sb)
 
@@ -4407,6 +4479,8 @@ COPY foo bar
 }
 
 func testFrontendUseForwardedSolveResults(t *testing.T, sb integration.Sandbox) {
+	scopeagent.SetTestCodeFromCaller(t)
+
 	c, err := client.New(scopeagent.GetContextFromTest(t), sb.Address())
 	require.NoError(t, err)
 	defer c.Close()
@@ -4478,6 +4552,8 @@ COPY foo foo2
 }
 
 func testFrontendInputs(t *testing.T, sb integration.Sandbox) {
+	scopeagent.SetTestCodeFromCaller(t)
+
 	f := getFrontend(t, sb)
 
 	c, err := client.New(scopeagent.GetContextFromTest(t), sb.Address())

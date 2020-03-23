@@ -39,6 +39,8 @@ func TestFrontendIntegration(t *testing.T) {
 }
 
 func testRefReadFile(t *testing.T, sb integration.Sandbox) {
+	scopeagent.SetTestCodeFromCaller(t)
+
 	ctx := scopeagent.GetContextFromTest(t)
 
 	c, err := client.New(ctx, sb.Address())
@@ -104,6 +106,7 @@ func testRefReadFile(t *testing.T, sb integration.Sandbox) {
 }
 
 func testRefReadDir(t *testing.T, sb integration.Sandbox) {
+	scopeagent.SetTestCodeFromCaller(t)
 	ctx := scopeagent.GetContextFromTest(t)
 
 	c, err := client.New(ctx, sb.Address())
@@ -220,6 +223,7 @@ func testRefReadDir(t *testing.T, sb integration.Sandbox) {
 }
 
 func testRefStatFile(t *testing.T, sb integration.Sandbox) {
+	scopeagent.SetTestCodeFromCaller(t)
 	ctx := scopeagent.GetContextFromTest(t)
 
 	c, err := client.New(ctx, sb.Address())

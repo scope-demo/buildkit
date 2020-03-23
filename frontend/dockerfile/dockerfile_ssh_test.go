@@ -32,6 +32,8 @@ func init() {
 }
 
 func testSSHSocketParams(t *testing.T, sb integration.Sandbox) {
+	scopeagent.SetTestCodeFromCaller(t)
+
 	f := getFrontend(t, sb)
 
 	dockerfile := []byte(`

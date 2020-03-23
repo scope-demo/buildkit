@@ -25,6 +25,8 @@ func init() {
 }
 
 func testSecretFileParams(t *testing.T, sb integration.Sandbox) {
+	scopeagent.SetTestCodeFromCaller(t)
+
 	f := getFrontend(t, sb)
 
 	dockerfile := []byte(`

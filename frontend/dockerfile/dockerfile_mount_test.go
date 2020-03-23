@@ -31,6 +31,8 @@ func init() {
 }
 
 func testMountContext(t *testing.T, sb integration.Sandbox) {
+	scopeagent.SetTestCodeFromCaller(t)
+
 	f := getFrontend(t, sb)
 
 	dockerfile := []byte(`
@@ -59,6 +61,8 @@ RUN --mount=target=/context [ "$(cat /context/testfile)" == "contents0" ]
 }
 
 func testMountTmpfs(t *testing.T, sb integration.Sandbox) {
+	scopeagent.SetTestCodeFromCaller(t)
+
 	f := getFrontend(t, sb)
 
 	dockerfile := []byte(`
@@ -87,6 +91,8 @@ RUN [ ! -f /mytmp/foo ]
 }
 
 func testMountRWCache(t *testing.T, sb integration.Sandbox) {
+	scopeagent.SetTestCodeFromCaller(t)
+
 	f := getFrontend(t, sb)
 
 	dockerfile := []byte(`
@@ -196,6 +202,8 @@ RUN --mount=type=cache,target=/mycache,uid=1001,gid=1002,mode=0751 [ "$(stat -c 
 }
 
 func testCacheMountDefaultID(t *testing.T, sb integration.Sandbox) {
+	scopeagent.SetTestCodeFromCaller(t)
+
 	f := getFrontend(t, sb)
 
 	dockerfile := []byte(`

@@ -35,6 +35,8 @@ func init() {
 }
 
 func testInsecureDevicesWhitelist(t *testing.T, sb integration.Sandbox) {
+	scopeagent.SetTestCodeFromCaller(t)
+
 	if sb.Rootless() {
 		t.SkipNow()
 	}
@@ -90,6 +92,8 @@ RUN --security=insecure ls -l /dev && dd if=/dev/zero of=disk.img bs=20M count=1
 }
 
 func testRunSecurityInsecure(t *testing.T, sb integration.Sandbox) {
+	scopeagent.SetTestCodeFromCaller(t)
+
 	f := getFrontend(t, sb)
 
 	dockerfile := []byte(`
@@ -129,6 +133,8 @@ RUN [ "$(cat /proc/self/status | grep CapBnd)" == "CapBnd:	00000000a80425fb" ]
 }
 
 func testRunSecuritySandbox(t *testing.T, sb integration.Sandbox) {
+	scopeagent.SetTestCodeFromCaller(t)
+
 	f := getFrontend(t, sb)
 
 	dockerfile := []byte(`
@@ -157,6 +163,8 @@ RUN --security=sandbox [ "$(cat /proc/self/status | grep CapBnd)" == "CapBnd:	00
 }
 
 func testRunSecurityDefault(t *testing.T, sb integration.Sandbox) {
+	scopeagent.SetTestCodeFromCaller(t)
+
 	f := getFrontend(t, sb)
 
 	dockerfile := []byte(`
