@@ -71,7 +71,7 @@ if [ ! -z "$SCOPE_DSN" ]; then
   covermode="-covermode=count"
 
   if [[ -z "$TESTFLAGS" || "$TESTFLAGS" != *"parallel"* ]]; then
-    covermode = covermode" --parallel=1"
+    covermode=$covermode" --parallel=1"
   fi
 fi
 
