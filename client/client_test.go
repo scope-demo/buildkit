@@ -140,6 +140,8 @@ func newContainerd(cdAddress string) (*containerd.Client, error) {
 
 // moby/buildkit#1336
 func testCacheExportCacheKeyLoop(t *testing.T, sb integration.Sandbox) {
+	scopeagent.SetTestCodeFromCaller(t)
+
 	c, err := New(scopeagent.GetContextFromTest(t), sb.Address())
 	require.NoError(t, err)
 	defer c.Close()
@@ -184,6 +186,8 @@ func testCacheExportCacheKeyLoop(t *testing.T, sb integration.Sandbox) {
 }
 
 func testBridgeNetworking(t *testing.T, sb integration.Sandbox) {
+	scopeagent.SetTestCodeFromCaller(t)
+
 	if os.Getenv("BUILDKIT_RUN_NETWORK_INTEGRATION_TESTS") == "" {
 		t.SkipNow()
 	}
@@ -205,6 +209,8 @@ func testBridgeNetworking(t *testing.T, sb integration.Sandbox) {
 	require.Error(t, err)
 }
 func testHostNetworking(t *testing.T, sb integration.Sandbox) {
+	scopeagent.SetTestCodeFromCaller(t)
+
 	if os.Getenv("BUILDKIT_RUN_NETWORK_INTEGRATION_TESTS") == "" {
 		t.SkipNow()
 	}
@@ -236,6 +242,8 @@ func testHostNetworking(t *testing.T, sb integration.Sandbox) {
 
 // #877
 func testExportBusyboxLocal(t *testing.T, sb integration.Sandbox) {
+	scopeagent.SetTestCodeFromCaller(t)
+
 	c, err := New(scopeagent.GetContextFromTest(t), sb.Address())
 	require.NoError(t, err)
 	defer c.Close()
@@ -270,6 +278,8 @@ func testExportBusyboxLocal(t *testing.T, sb integration.Sandbox) {
 }
 
 func testHostnameLookup(t *testing.T, sb integration.Sandbox) {
+	scopeagent.SetTestCodeFromCaller(t)
+
 	if sb.Rootless() {
 		t.SkipNow()
 	}
@@ -289,6 +299,8 @@ func testHostnameLookup(t *testing.T, sb integration.Sandbox) {
 
 // moby/buildkit#614
 func testStdinClosed(t *testing.T, sb integration.Sandbox) {
+	scopeagent.SetTestCodeFromCaller(t)
+
 	c, err := New(scopeagent.GetContextFromTest(t), sb.Address())
 	require.NoError(t, err)
 	defer c.Close()
@@ -303,6 +315,8 @@ func testStdinClosed(t *testing.T, sb integration.Sandbox) {
 }
 
 func testSSHMount(t *testing.T, sb integration.Sandbox) {
+	scopeagent.SetTestCodeFromCaller(t)
+
 	c, err := New(scopeagent.GetContextFromTest(t), sb.Address())
 	require.NoError(t, err)
 	defer c.Close()
@@ -469,6 +483,8 @@ func testSSHMount(t *testing.T, sb integration.Sandbox) {
 }
 
 func testExtraHosts(t *testing.T, sb integration.Sandbox) {
+	scopeagent.SetTestCodeFromCaller(t)
+
 	c, err := New(scopeagent.GetContextFromTest(t), sb.Address())
 	require.NoError(t, err)
 	defer c.Close()
@@ -484,6 +500,8 @@ func testExtraHosts(t *testing.T, sb integration.Sandbox) {
 }
 
 func testNetworkMode(t *testing.T, sb integration.Sandbox) {
+	scopeagent.SetTestCodeFromCaller(t)
+
 	c, err := New(scopeagent.GetContextFromTest(t), sb.Address())
 	require.NoError(t, err)
 	defer c.Close()
@@ -512,6 +530,8 @@ func testNetworkMode(t *testing.T, sb integration.Sandbox) {
 }
 
 func testPushByDigest(t *testing.T, sb integration.Sandbox) {
+	scopeagent.SetTestCodeFromCaller(t)
+
 	requiresLinux(t)
 	c, err := New(scopeagent.GetContextFromTest(t), sb.Address())
 	require.NoError(t, err)
@@ -556,6 +576,8 @@ func testPushByDigest(t *testing.T, sb integration.Sandbox) {
 }
 
 func testSecurityMode(t *testing.T, sb integration.Sandbox) {
+	scopeagent.SetTestCodeFromCaller(t)
+
 	var command string
 	mode := llb.SecurityModeSandbox
 	var allowedEntitlements []entitlements.Entitlement
@@ -601,6 +623,8 @@ func testSecurityMode(t *testing.T, sb integration.Sandbox) {
 }
 
 func testSecurityModeSysfs(t *testing.T, sb integration.Sandbox) {
+	scopeagent.SetTestCodeFromCaller(t)
+
 	if sb.Rootless() {
 		t.SkipNow()
 	}
@@ -641,6 +665,7 @@ func testSecurityModeSysfs(t *testing.T, sb integration.Sandbox) {
 }
 
 func testSecurityModeErrors(t *testing.T, sb integration.Sandbox) {
+	scopeagent.SetTestCodeFromCaller(t)
 
 	c, err := New(scopeagent.GetContextFromTest(t), sb.Address())
 	require.NoError(t, err)
@@ -674,6 +699,8 @@ func testSecurityModeErrors(t *testing.T, sb integration.Sandbox) {
 }
 
 func testFrontendImageNaming(t *testing.T, sb integration.Sandbox) {
+	scopeagent.SetTestCodeFromCaller(t)
+
 	requiresLinux(t)
 	c, err := New(scopeagent.GetContextFromTest(t), sb.Address())
 	require.NoError(t, err)
@@ -827,6 +854,8 @@ func testFrontendImageNaming(t *testing.T, sb integration.Sandbox) {
 }
 
 func testSecretMounts(t *testing.T, sb integration.Sandbox) {
+	scopeagent.SetTestCodeFromCaller(t)
+
 	c, err := New(scopeagent.GetContextFromTest(t), sb.Address())
 	require.NoError(t, err)
 	defer c.Close()
@@ -886,6 +915,8 @@ func testSecretMounts(t *testing.T, sb integration.Sandbox) {
 }
 
 func testTmpfsMounts(t *testing.T, sb integration.Sandbox) {
+	scopeagent.SetTestCodeFromCaller(t)
+
 	requiresLinux(t)
 	c, err := New(scopeagent.GetContextFromTest(t), sb.Address())
 	require.NoError(t, err)
@@ -902,6 +933,8 @@ func testTmpfsMounts(t *testing.T, sb integration.Sandbox) {
 }
 
 func testLocalSymlinkEscape(t *testing.T, sb integration.Sandbox) {
+	scopeagent.SetTestCodeFromCaller(t)
+
 	requiresLinux(t)
 	c, err := New(scopeagent.GetContextFromTest(t), sb.Address())
 	require.NoError(t, err)
@@ -959,6 +992,8 @@ func testLocalSymlinkEscape(t *testing.T, sb integration.Sandbox) {
 }
 
 func testRelativeWorkDir(t *testing.T, sb integration.Sandbox) {
+	scopeagent.SetTestCodeFromCaller(t)
+
 	requiresLinux(t)
 	c, err := New(scopeagent.GetContextFromTest(t), sb.Address())
 	require.NoError(t, err)
@@ -993,6 +1028,8 @@ func testRelativeWorkDir(t *testing.T, sb integration.Sandbox) {
 }
 
 func testFileOpMkdirMkfile(t *testing.T, sb integration.Sandbox) {
+	scopeagent.SetTestCodeFromCaller(t)
+
 	requiresLinux(t)
 	c, err := New(scopeagent.GetContextFromTest(t), sb.Address())
 	require.NoError(t, err)
@@ -1028,6 +1065,8 @@ func testFileOpMkdirMkfile(t *testing.T, sb integration.Sandbox) {
 }
 
 func testFileOpCopyRm(t *testing.T, sb integration.Sandbox) {
+	scopeagent.SetTestCodeFromCaller(t)
+
 	requiresLinux(t)
 	c, err := New(scopeagent.GetContextFromTest(t), sb.Address())
 	require.NoError(t, err)
@@ -1098,6 +1137,8 @@ func testFileOpCopyRm(t *testing.T, sb integration.Sandbox) {
 }
 
 func testFileOpRmWildcard(t *testing.T, sb integration.Sandbox) {
+	scopeagent.SetTestCodeFromCaller(t)
+
 	requiresLinux(t)
 	c, err := New(scopeagent.GetContextFromTest(t), sb.Address())
 	require.NoError(t, err)
@@ -1155,6 +1196,8 @@ func testFileOpRmWildcard(t *testing.T, sb integration.Sandbox) {
 }
 
 func testCallDiskUsage(t *testing.T, sb integration.Sandbox) {
+	scopeagent.SetTestCodeFromCaller(t)
+
 	c, err := New(scopeagent.GetContextFromTest(t), sb.Address())
 	require.NoError(t, err)
 	defer c.Close()
@@ -1163,6 +1206,8 @@ func testCallDiskUsage(t *testing.T, sb integration.Sandbox) {
 }
 
 func testBuildMultiMount(t *testing.T, sb integration.Sandbox) {
+	scopeagent.SetTestCodeFromCaller(t)
+
 	requiresLinux(t)
 	c, err := New(scopeagent.GetContextFromTest(t), sb.Address())
 	require.NoError(t, err)
@@ -1184,6 +1229,8 @@ func testBuildMultiMount(t *testing.T, sb integration.Sandbox) {
 }
 
 func testBuildHTTPSource(t *testing.T, sb integration.Sandbox) {
+	scopeagent.SetTestCodeFromCaller(t)
+
 	c, err := New(scopeagent.GetContextFromTest(t), sb.Address())
 	require.NoError(t, err)
 	defer c.Close()
@@ -1278,6 +1325,8 @@ func testBuildHTTPSource(t *testing.T, sb integration.Sandbox) {
 }
 
 func testResolveAndHosts(t *testing.T, sb integration.Sandbox) {
+	scopeagent.SetTestCodeFromCaller(t)
+
 	requiresLinux(t)
 	c, err := New(scopeagent.GetContextFromTest(t), sb.Address())
 	require.NoError(t, err)
@@ -1321,6 +1370,8 @@ func testResolveAndHosts(t *testing.T, sb integration.Sandbox) {
 }
 
 func testUser(t *testing.T, sb integration.Sandbox) {
+	scopeagent.SetTestCodeFromCaller(t)
+
 	requiresLinux(t)
 	c, err := New(scopeagent.GetContextFromTest(t), sb.Address())
 	require.NoError(t, err)
@@ -1377,6 +1428,8 @@ func testUser(t *testing.T, sb integration.Sandbox) {
 }
 
 func testOCIExporter(t *testing.T, sb integration.Sandbox) {
+	scopeagent.SetTestCodeFromCaller(t)
+
 	requiresLinux(t)
 	c, err := New(scopeagent.GetContextFromTest(t), sb.Address())
 	require.NoError(t, err)
@@ -1480,6 +1533,8 @@ func testOCIExporter(t *testing.T, sb integration.Sandbox) {
 }
 
 func testFrontendMetadataReturn(t *testing.T, sb integration.Sandbox) {
+	scopeagent.SetTestCodeFromCaller(t)
+
 	requiresLinux(t)
 	c, err := New(scopeagent.GetContextFromTest(t), sb.Address())
 	require.NoError(t, err)
@@ -1511,6 +1566,8 @@ func testFrontendMetadataReturn(t *testing.T, sb integration.Sandbox) {
 }
 
 func testFrontendUseSolveResults(t *testing.T, sb integration.Sandbox) {
+	scopeagent.SetTestCodeFromCaller(t)
+
 	requiresLinux(t)
 	c, err := New(scopeagent.GetContextFromTest(t), sb.Address())
 	require.NoError(t, err)
@@ -1577,6 +1634,8 @@ func testFrontendUseSolveResults(t *testing.T, sb integration.Sandbox) {
 }
 
 func testExporterTargetExists(t *testing.T, sb integration.Sandbox) {
+	scopeagent.SetTestCodeFromCaller(t)
+
 	requiresLinux(t)
 	c, err := New(scopeagent.GetContextFromTest(t), sb.Address())
 	require.NoError(t, err)
@@ -1607,6 +1666,8 @@ func testExporterTargetExists(t *testing.T, sb integration.Sandbox) {
 }
 
 func testTarExporterWithSocket(t *testing.T, sb integration.Sandbox) {
+	scopeagent.SetTestCodeFromCaller(t)
+
 	requiresLinux(t)
 	c, err := New(scopeagent.GetContextFromTest(t), sb.Address())
 	require.NoError(t, err)
@@ -1631,6 +1692,8 @@ func testTarExporterWithSocket(t *testing.T, sb integration.Sandbox) {
 }
 
 func testBuildExportWithUncompressed(t *testing.T, sb integration.Sandbox) {
+	scopeagent.SetTestCodeFromCaller(t)
+
 	requiresLinux(t)
 	c, err := New(scopeagent.GetContextFromTest(t), sb.Address())
 	require.NoError(t, err)
@@ -1746,6 +1809,8 @@ func testBuildExportWithUncompressed(t *testing.T, sb integration.Sandbox) {
 }
 
 func testBuildPushAndValidate(t *testing.T, sb integration.Sandbox) {
+	scopeagent.SetTestCodeFromCaller(t)
+
 	requiresLinux(t)
 	c, err := New(scopeagent.GetContextFromTest(t), sb.Address())
 	require.NoError(t, err)
@@ -1949,6 +2014,8 @@ func testBuildPushAndValidate(t *testing.T, sb integration.Sandbox) {
 }
 
 func testBasicCacheImportExport(t *testing.T, sb integration.Sandbox, cacheOptionsEntryImport, cacheOptionsEntryExport []CacheOptionsEntry) {
+	scopeagent.SetTestCodeFromCaller(t)
+
 	requiresLinux(t)
 	c, err := New(scopeagent.GetContextFromTest(t), sb.Address())
 	require.NoError(t, err)
@@ -2018,6 +2085,8 @@ func testBasicCacheImportExport(t *testing.T, sb integration.Sandbox, cacheOptio
 }
 
 func testBasicRegistryCacheImportExport(t *testing.T, sb integration.Sandbox) {
+	scopeagent.SetTestCodeFromCaller(t)
+
 	registry, err := sb.NewRegistry()
 	if errors.Cause(err) == integration.ErrorRequirements {
 		t.Skip(err.Error())
@@ -2034,6 +2103,8 @@ func testBasicRegistryCacheImportExport(t *testing.T, sb integration.Sandbox) {
 }
 
 func testMultipleRegistryCacheImportExport(t *testing.T, sb integration.Sandbox) {
+	scopeagent.SetTestCodeFromCaller(t)
+
 	registry, err := sb.NewRegistry()
 	if errors.Cause(err) == integration.ErrorRequirements {
 		t.Skip(err.Error())
@@ -2056,6 +2127,8 @@ func testMultipleRegistryCacheImportExport(t *testing.T, sb integration.Sandbox)
 }
 
 func testBasicLocalCacheImportExport(t *testing.T, sb integration.Sandbox) {
+	scopeagent.SetTestCodeFromCaller(t)
+
 	dir, err := ioutil.TempDir("", "buildkit")
 	require.NoError(t, err)
 	defer os.RemoveAll(dir)
@@ -2075,6 +2148,8 @@ func testBasicLocalCacheImportExport(t *testing.T, sb integration.Sandbox) {
 }
 
 func testBasicInlineCacheImportExport(t *testing.T, sb integration.Sandbox) {
+	scopeagent.SetTestCodeFromCaller(t)
+
 	requiresLinux(t)
 	registry, err := sb.NewRegistry()
 	if errors.Cause(err) == integration.ErrorRequirements {
@@ -2224,6 +2299,8 @@ func readFileInImage(c *Client, ref, path string) ([]byte, error) {
 }
 
 func testCachedMounts(t *testing.T, sb integration.Sandbox) {
+	scopeagent.SetTestCodeFromCaller(t)
+
 	requiresLinux(t)
 	c, err := New(scopeagent.GetContextFromTest(t), sb.Address())
 	require.NoError(t, err)
@@ -2289,6 +2366,8 @@ func testCachedMounts(t *testing.T, sb integration.Sandbox) {
 }
 
 func testSharedCacheMounts(t *testing.T, sb integration.Sandbox) {
+	scopeagent.SetTestCodeFromCaller(t)
+
 	requiresLinux(t)
 	c, err := New(scopeagent.GetContextFromTest(t), sb.Address())
 	require.NoError(t, err)
@@ -2313,6 +2392,8 @@ func testSharedCacheMounts(t *testing.T, sb integration.Sandbox) {
 }
 
 func testLockedCacheMounts(t *testing.T, sb integration.Sandbox) {
+	scopeagent.SetTestCodeFromCaller(t)
+
 	requiresLinux(t)
 	c, err := New(scopeagent.GetContextFromTest(t), sb.Address())
 	require.NoError(t, err)
@@ -2337,6 +2418,8 @@ func testLockedCacheMounts(t *testing.T, sb integration.Sandbox) {
 }
 
 func testDuplicateCacheMount(t *testing.T, sb integration.Sandbox) {
+	scopeagent.SetTestCodeFromCaller(t)
+
 	requiresLinux(t)
 	c, err := New(scopeagent.GetContextFromTest(t), sb.Address())
 	require.NoError(t, err)
@@ -2356,6 +2439,8 @@ func testDuplicateCacheMount(t *testing.T, sb integration.Sandbox) {
 }
 
 func testCacheMountNoCache(t *testing.T, sb integration.Sandbox) {
+	scopeagent.SetTestCodeFromCaller(t)
+
 	requiresLinux(t)
 	c, err := New(scopeagent.GetContextFromTest(t), sb.Address())
 	require.NoError(t, err)
@@ -2395,6 +2480,8 @@ func testCacheMountNoCache(t *testing.T, sb integration.Sandbox) {
 
 // containerd/containerd#2119
 func testDuplicateWhiteouts(t *testing.T, sb integration.Sandbox) {
+	scopeagent.SetTestCodeFromCaller(t)
+
 	requiresLinux(t)
 	c, err := New(scopeagent.GetContextFromTest(t), sb.Address())
 	require.NoError(t, err)
@@ -2466,6 +2553,8 @@ func testDuplicateWhiteouts(t *testing.T, sb integration.Sandbox) {
 
 // #276
 func testWhiteoutParentDir(t *testing.T, sb integration.Sandbox) {
+	scopeagent.SetTestCodeFromCaller(t)
+
 	requiresLinux(t)
 	c, err := New(scopeagent.GetContextFromTest(t), sb.Address())
 	require.NoError(t, err)
@@ -2532,6 +2621,8 @@ func testWhiteoutParentDir(t *testing.T, sb integration.Sandbox) {
 
 // #296
 func testSchema1Image(t *testing.T, sb integration.Sandbox) {
+	scopeagent.SetTestCodeFromCaller(t)
+
 	c, err := New(scopeagent.GetContextFromTest(t), sb.Address())
 	require.NoError(t, err)
 	defer c.Close()
@@ -2549,6 +2640,8 @@ func testSchema1Image(t *testing.T, sb integration.Sandbox) {
 
 // #319
 func testMountWithNoSource(t *testing.T, sb integration.Sandbox) {
+	scopeagent.SetTestCodeFromCaller(t)
+
 	c, err := New(scopeagent.GetContextFromTest(t), sb.Address())
 	require.NoError(t, err)
 	defer c.Close()
@@ -2578,6 +2671,8 @@ func testMountWithNoSource(t *testing.T, sb integration.Sandbox) {
 
 // #324
 func testReadonlyRootFS(t *testing.T, sb integration.Sandbox) {
+	scopeagent.SetTestCodeFromCaller(t)
+
 	c, err := New(scopeagent.GetContextFromTest(t), sb.Address())
 	require.NoError(t, err)
 	defer c.Close()
@@ -2605,6 +2700,8 @@ func testReadonlyRootFS(t *testing.T, sb integration.Sandbox) {
 }
 
 func testProxyEnv(t *testing.T, sb integration.Sandbox) {
+	scopeagent.SetTestCodeFromCaller(t)
+
 	c, err := New(scopeagent.GetContextFromTest(t), sb.Address())
 	require.NoError(t, err)
 	defer c.Close()
@@ -2771,6 +2868,8 @@ loop0:
 }
 
 func testInvalidExporter(t *testing.T, sb integration.Sandbox) {
+	scopeagent.SetTestCodeFromCaller(t)
+
 	requiresLinux(t)
 	c, err := New(scopeagent.GetContextFromTest(t), sb.Address())
 	require.NoError(t, err)
@@ -2842,6 +2941,8 @@ func testInvalidExporter(t *testing.T, sb integration.Sandbox) {
 
 // moby/buildkit#492
 func testParallelLocalBuilds(t *testing.T, sb integration.Sandbox) {
+	scopeagent.SetTestCodeFromCaller(t)
+
 	ctx, cancel := context.WithCancel(scopeagent.GetContextFromTest(t))
 	defer cancel()
 
