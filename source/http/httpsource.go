@@ -5,6 +5,7 @@ import (
 	"crypto/sha256"
 	"encoding/json"
 	"fmt"
+	"github.com/moby/buildkit/util/tracing"
 	"io"
 	"mime"
 	"net/http"
@@ -22,7 +23,6 @@ import (
 	"github.com/moby/buildkit/session"
 	"github.com/moby/buildkit/snapshot"
 	"github.com/moby/buildkit/source"
-	"github.com/moby/buildkit/util/tracing"
 	digest "github.com/opencontainers/go-digest"
 	"github.com/pkg/errors"
 	bolt "go.etcd.io/bbolt"
@@ -44,7 +44,7 @@ type httpSource struct {
 func NewSource(opt Opt) (source.Source, error) {
 	transport := opt.Transport
 	if transport == nil {
-		transport = tracing.DefaultTransport
+		transport = tracing.GetHttpTransport()
 	}
 	hs := &httpSource{
 		md:        opt.MetadataStore,

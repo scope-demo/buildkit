@@ -46,7 +46,7 @@ func NewRegistryConfig(m map[string]RegistryConf) docker.RegistryHosts {
 			for _, mirror := range c.Mirrors {
 				h := docker.RegistryHost{
 					Scheme:       "https",
-					Client:       tracing.DefaultClient,
+					Client:       tracing.GetHttpClient(),
 					Host:         mirror,
 					Path:         "/v2",
 					Capabilities: docker.HostCapabilityPull | docker.HostCapabilityResolve,
@@ -60,9 +60,10 @@ func NewRegistryConfig(m map[string]RegistryConf) docker.RegistryHosts {
 				host = "registry-1.docker.io"
 			}
 
+
 			h := docker.RegistryHost{
 				Scheme:       "https",
-				Client:       tracing.DefaultClient,
+				Client:       tracing.GetHttpClient(),
 				Host:         host,
 				Path:         "/v2",
 				Capabilities: docker.HostCapabilityPush | docker.HostCapabilityPull | docker.HostCapabilityResolve,
@@ -72,7 +73,7 @@ func NewRegistryConfig(m map[string]RegistryConf) docker.RegistryHosts {
 			out = append(out, h)
 			return out, nil
 		},
-		docker.ConfigureDefaultRegistries(docker.WithClient(tracing.DefaultClient), docker.WithPlainHTTP(docker.MatchLocalhost)),
+		docker.ConfigureDefaultRegistries(docker.WithClient(tracing.GetHttpClient()), docker.WithPlainHTTP(docker.MatchLocalhost)),
 	)
 }
 
