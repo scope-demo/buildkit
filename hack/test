@@ -68,7 +68,7 @@ cacheVolume=$(docker create -v /root/.cache -v /root/.cache/registry -v /go/pkg/
 
 covermode=""
 if [ ! -z "$SCOPE_DSN" ]; then
-  covermode="-covermode=count -p 1"
+  covermode="-covermode=count -parallel 1"
 fi
 
 if [ "$TEST_INTEGRATION" == 1 ]; then
