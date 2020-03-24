@@ -4,6 +4,7 @@ import (
 	"bufio"
 	"bytes"
 	"fmt"
+	"go.undefinedlabs.com/scopeagent/env"
 	"log"
 	"os"
 
@@ -54,7 +55,7 @@ func (s *oci) New(cfg *BackendConfig) (Backend, func() error, error) {
 			return nil, nil, errors.Errorf("unsupported id pair: uid=%d, gid=%d", s.uid, s.gid)
 		}
 		// TODO: make sure the user exists and subuid/subgid are configured.
-		buildkitdArgs = append([]string{"sudo", "-u", fmt.Sprintf("#%d", s.uid), "-i", "--", "rootlesskit"}, buildkitdArgs...)
+		buildkitdArgs = append([]string{"sudo", fmt.Sprintf("SCOPE_DSN=%s", env.ScopeDsn.Value), "SCOPE_SERVICE=builkitd_sandbox", "-u", fmt.Sprintf("#%d", s.uid), "-i", "--", "rootlesskit"}, buildkitdArgs...)
 	}
 
 	buildkitdSock, stop, err := runBuildkitd(cfg, buildkitdArgs, cfg.Logs, s.uid, s.gid)
