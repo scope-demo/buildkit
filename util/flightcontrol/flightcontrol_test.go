@@ -6,10 +6,9 @@ import (
 	"testing"
 	"time"
 
-	"go.undefinedlabs.com/scopeagent"
-
 	"github.com/pkg/errors"
 	"github.com/stretchr/testify/assert"
+	"go.undefinedlabs.com/scopeagent"
 	"golang.org/x/sync/errgroup"
 )
 

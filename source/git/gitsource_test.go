@@ -9,8 +9,6 @@ import (
 	"strings"
 	"testing"
 
-	"go.undefinedlabs.com/scopeagent"
-
 	"github.com/containerd/containerd/content/local"
 	ctdmetadata "github.com/containerd/containerd/metadata"
 	"github.com/containerd/containerd/namespaces"
@@ -26,6 +24,7 @@ import (
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
 	bolt "go.etcd.io/bbolt"
+	"go.undefinedlabs.com/scopeagent"
 )
 
 func TestRepeatedFetch(t *testing.T) {

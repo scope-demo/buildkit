@@ -6,12 +6,11 @@ import (
 	"sync/atomic"
 	"testing"
 
-	"go.undefinedlabs.com/scopeagent"
-
 	"github.com/moby/buildkit/solver/llbsolver/ops/fileoptypes"
 	"github.com/moby/buildkit/solver/pb"
 	"github.com/pkg/errors"
 	"github.com/stretchr/testify/require"
+	"go.undefinedlabs.com/scopeagent"
 )
 
 func TestMkdirMkfile(t *testing.T) {

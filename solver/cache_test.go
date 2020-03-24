@@ -4,11 +4,10 @@ import (
 	"testing"
 	"time"
 
-	"go.undefinedlabs.com/scopeagent"
-
 	"github.com/moby/buildkit/identity"
 	digest "github.com/opencontainers/go-digest"
 	"github.com/stretchr/testify/require"
+	"go.undefinedlabs.com/scopeagent"
 )
 
 func depKeys(cks ...ExportableCacheKey) []CacheKeyWithSelector {

@@ -4,12 +4,12 @@ import (
 	"bufio"
 	"bytes"
 	"fmt"
-	"go.undefinedlabs.com/scopeagent/env"
 	"log"
 	"os"
 
 	"github.com/pkg/errors"
 	"github.com/sirupsen/logrus"
+	"go.undefinedlabs.com/scopeagent/env"
 )
 
 func InitOCIWorker() {

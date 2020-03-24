@@ -7,8 +7,6 @@ import (
 	"path/filepath"
 	"testing"
 
-	"go.undefinedlabs.com/scopeagent"
-
 	"github.com/containerd/containerd/content/local"
 	ctdmetadata "github.com/containerd/containerd/metadata"
 	"github.com/containerd/containerd/snapshots"
@@ -24,6 +22,7 @@ import (
 	digest "github.com/opencontainers/go-digest"
 	"github.com/stretchr/testify/require"
 	bolt "go.etcd.io/bbolt"
+	"go.undefinedlabs.com/scopeagent"
 )
 
 func TestHTTPSource(t *testing.T) {

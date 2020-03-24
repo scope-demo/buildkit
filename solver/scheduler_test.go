@@ -11,14 +11,13 @@ import (
 	"testing"
 	"time"
 
-	"go.undefinedlabs.com/scopeagent"
-
 	"github.com/moby/buildkit/identity"
 	digest "github.com/opencontainers/go-digest"
 	ocispec "github.com/opencontainers/image-spec/specs-go/v1"
 	"github.com/pkg/errors"
 	"github.com/sirupsen/logrus"
 	"github.com/stretchr/testify/require"
+	"go.undefinedlabs.com/scopeagent"
 	"golang.org/x/sync/errgroup"
 )
 

@@ -21,8 +21,6 @@ import (
 	"testing"
 	"time"
 
-	"go.undefinedlabs.com/scopeagent"
-
 	"github.com/containerd/containerd"
 	"github.com/containerd/containerd/content"
 	"github.com/containerd/containerd/images"
@@ -44,6 +42,7 @@ import (
 	ocispec "github.com/opencontainers/image-spec/specs-go/v1"
 	"github.com/pkg/errors"
 	"github.com/stretchr/testify/require"
+	"go.undefinedlabs.com/scopeagent"
 	"golang.org/x/crypto/ssh/agent"
 	"golang.org/x/sync/errgroup"
 )

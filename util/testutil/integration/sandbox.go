@@ -16,11 +16,10 @@ import (
 	"testing"
 	"time"
 
-	"go.undefinedlabs.com/scopeagent/instrumentation/process"
-
 	"github.com/google/shlex"
 	"github.com/pkg/errors"
 	"github.com/sirupsen/logrus"
+	"go.undefinedlabs.com/scopeagent/instrumentation/process"
 )
 
 const buildkitdConfigFile = "buildkitd.toml"

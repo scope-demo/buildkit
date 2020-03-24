@@ -9,8 +9,6 @@ import (
 	"testing"
 	"time"
 
-	"go.undefinedlabs.com/scopeagent"
-
 	"github.com/containerd/containerd/content"
 	"github.com/containerd/containerd/content/local"
 	"github.com/containerd/containerd/diff/apply"
@@ -28,6 +26,7 @@ import (
 	"github.com/pkg/errors"
 	"github.com/stretchr/testify/require"
 	bolt "go.etcd.io/bbolt"
+	"go.undefinedlabs.com/scopeagent"
 	"golang.org/x/sync/errgroup"
 )
 

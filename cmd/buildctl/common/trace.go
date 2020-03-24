@@ -2,12 +2,9 @@ package common
 
 import (
 	"context"
-	"go.undefinedlabs.com/scopeagent/env"
 	"io"
 	"os"
 	"strings"
-
-	"go.undefinedlabs.com/scopeagent/instrumentation"
 
 	"github.com/moby/buildkit/util/appcontext"
 	opentracing "github.com/opentracing/opentracing-go"
@@ -15,6 +12,8 @@ import (
 	"github.com/opentracing/opentracing-go/log"
 	jaeger "github.com/uber/jaeger-client-go"
 	"github.com/urfave/cli"
+	"go.undefinedlabs.com/scopeagent/env"
+	"go.undefinedlabs.com/scopeagent/instrumentation"
 )
 
 func getTracer() (opentracing.Tracer, io.Closer) {

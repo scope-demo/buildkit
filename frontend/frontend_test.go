@@ -7,8 +7,6 @@ import (
 	"path/filepath"
 	"testing"
 
-	"go.undefinedlabs.com/scopeagent"
-
 	"github.com/containerd/continuity/fs/fstest"
 	"github.com/moby/buildkit/client"
 	"github.com/moby/buildkit/client/llb"
@@ -19,6 +17,7 @@ import (
 	"github.com/stretchr/testify/require"
 	"github.com/tonistiigi/fsutil"
 	fstypes "github.com/tonistiigi/fsutil/types"
+	"go.undefinedlabs.com/scopeagent"
 )
 
 var (

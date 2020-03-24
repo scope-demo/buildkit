@@ -10,8 +10,6 @@ import (
 	"testing"
 	"time"
 
-	"go.undefinedlabs.com/scopeagent"
-
 	"github.com/containerd/containerd/content/local"
 	ctdmetadata "github.com/containerd/containerd/metadata"
 	"github.com/containerd/containerd/snapshots"
@@ -27,6 +25,7 @@ import (
 	"github.com/tonistiigi/fsutil"
 	fstypes "github.com/tonistiigi/fsutil/types"
 	bolt "go.etcd.io/bbolt"
+	"go.undefinedlabs.com/scopeagent"
 )
 
 const (

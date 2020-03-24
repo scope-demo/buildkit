@@ -4,10 +4,9 @@ import (
 	"bytes"
 	"testing"
 
-	"go.undefinedlabs.com/scopeagent"
-
 	"github.com/containerd/containerd/platforms"
 	"github.com/stretchr/testify/require"
+	"go.undefinedlabs.com/scopeagent"
 )
 
 func TestDefinitionEquivalence(t *testing.T) {

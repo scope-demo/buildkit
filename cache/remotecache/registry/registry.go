@@ -2,7 +2,6 @@ package registry
 
 import (
 	"context"
-	"github.com/opencontainers/go-digest"
 
 	"github.com/containerd/containerd/content"
 	"github.com/containerd/containerd/remotes/docker"
@@ -11,6 +10,7 @@ import (
 	"github.com/moby/buildkit/session"
 	"github.com/moby/buildkit/util/contentutil"
 	"github.com/moby/buildkit/util/resolver"
+	"github.com/opencontainers/go-digest"
 	ocispec "github.com/opencontainers/image-spec/specs-go/v1"
 	specs "github.com/opencontainers/image-spec/specs-go/v1"
 	"github.com/pkg/errors"

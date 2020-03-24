@@ -7,8 +7,6 @@ import (
 	"path/filepath"
 	"testing"
 
-	"go.undefinedlabs.com/scopeagent"
-
 	"github.com/moby/buildkit/client/llb"
 	"github.com/moby/buildkit/frontend/gateway/client"
 	gatewayapi "github.com/moby/buildkit/frontend/gateway/pb"
@@ -16,6 +14,7 @@ import (
 	"github.com/moby/buildkit/util/testutil/integration"
 	"github.com/pkg/errors"
 	"github.com/stretchr/testify/require"
+	"go.undefinedlabs.com/scopeagent"
 )
 
 func TestClientGatewayIntegration(t *testing.T) {

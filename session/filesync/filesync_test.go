@@ -6,12 +6,11 @@ import (
 	"path/filepath"
 	"testing"
 
-	"go.undefinedlabs.com/scopeagent"
-
 	"github.com/moby/buildkit/session"
 	"github.com/moby/buildkit/session/testutil"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
+	"go.undefinedlabs.com/scopeagent"
 	"golang.org/x/sync/errgroup"
 )
 

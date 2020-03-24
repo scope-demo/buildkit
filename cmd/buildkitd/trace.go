@@ -4,11 +4,10 @@ import (
 	"io"
 	"os"
 
-	"go.undefinedlabs.com/scopeagent/env"
-	"go.undefinedlabs.com/scopeagent/instrumentation"
-
 	opentracing "github.com/opentracing/opentracing-go"
 	jaeger "github.com/uber/jaeger-client-go"
+	"go.undefinedlabs.com/scopeagent/env"
+	"go.undefinedlabs.com/scopeagent/instrumentation"
 )
 
 var tracer opentracing.Tracer

@@ -3,7 +3,6 @@ package tracing
 import (
 	"context"
 	"fmt"
-	"go.undefinedlabs.com/scopeagent/env"
 	"io"
 	"net/http"
 
@@ -11,6 +10,7 @@ import (
 	opentracing "github.com/opentracing/opentracing-go"
 	"github.com/opentracing/opentracing-go/ext"
 	"github.com/opentracing/opentracing-go/log"
+	"go.undefinedlabs.com/scopeagent/env"
 	scopenethttp "go.undefinedlabs.com/scopeagent/instrumentation/nethttp"
 )
 

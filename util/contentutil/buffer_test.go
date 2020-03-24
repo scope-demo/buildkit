@@ -5,14 +5,13 @@ import (
 	"io"
 	"testing"
 
-	"go.undefinedlabs.com/scopeagent"
-
 	"github.com/containerd/containerd/content"
 	"github.com/containerd/containerd/errdefs"
 	digest "github.com/opencontainers/go-digest"
 	ocispec "github.com/opencontainers/image-spec/specs-go/v1"
 	"github.com/pkg/errors"
 	"github.com/stretchr/testify/require"
+	"go.undefinedlabs.com/scopeagent"
 )
 
 func TestReadWrite(t *testing.T) {

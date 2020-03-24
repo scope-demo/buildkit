@@ -92,9 +92,9 @@ func (s *Solver) Bridge(b solver.Builder) frontend.FrontendLLBBridge {
 		resolveWorker:             s.resolveWorker,
 		eachWorker:                s.eachWorker,
 		resolveCacheImporterFuncs: s.resolveCacheImporterFuncs,
-		cms:       map[string]solver.CacheManager{},
-		platforms: s.platforms,
-		sm:        s.sm,
+		cms:                       map[string]solver.CacheManager{},
+		platforms:                 s.platforms,
+		sm:                        s.sm,
 	}
 }
 
