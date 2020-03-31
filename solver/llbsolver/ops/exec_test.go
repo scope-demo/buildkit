@@ -26,6 +26,7 @@ import (
 	"github.com/pkg/errors"
 	"github.com/stretchr/testify/require"
 	bolt "go.etcd.io/bbolt"
+	"go.undefinedlabs.com/scopeagent"
 	"golang.org/x/sync/errgroup"
 )
 
@@ -211,7 +212,7 @@ func TestCacheMountPrivateRefs(t *testing.T) {
 	require.NotEqual(t, ref.ID(), ref4.ID())
 
 	// releasing one of two refs still keeps first ID private
-	ref.Release(context.TODO())
+	ref.Release(scopeagent.GetContextFromTest(t))
 
 	ref5, err := g3.getRefCacheDir(ctx, nil, "foo", pb.CacheSharingOpt_PRIVATE)
 	require.NoError(t, err)
@@ -219,7 +220,7 @@ func TestCacheMountPrivateRefs(t *testing.T) {
 	require.NotEqual(t, ref4.ID(), ref5.ID())
 
 	// releasing all refs releases ID to be reused
-	ref3.Release(context.TODO())
+	ref3.Release(scopeagent.GetContextFromTest(t))
 
 	ref5, err = g4.getRefCacheDir(ctx, nil, "foo", pb.CacheSharingOpt_PRIVATE)
 	require.NoError(t, err)
@@ -382,10 +383,10 @@ func TestCacheMountSharedRefsDeadlock(t *testing.T) {
 		cacheRefReleaseHijack = nil
 		cacheRefCloneHijack = nil
 	}()
-	eg, _ := errgroup.WithContext(context.TODO())
+	eg, _ := errgroup.WithContext(scopeagent.GetContextFromTest(t))
 
 	eg.Go(func() error {
-		return ref.Release(context.TODO())
+		return ref.Release(scopeagent.GetContextFromTest(t))
 	})
 	eg.Go(func() error {
 		_, err := g2.getRefCacheDir(ctx, nil, "foo", pb.CacheSharingOpt_SHARED)

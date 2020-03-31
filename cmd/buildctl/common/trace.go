@@ -12,9 +12,16 @@ import (
 	"github.com/opentracing/opentracing-go/log"
 	jaeger "github.com/uber/jaeger-client-go"
 	"github.com/urfave/cli"
+	"go.undefinedlabs.com/scopeagent/env"
+	"go.undefinedlabs.com/scopeagent/instrumentation"
 )
 
 func getTracer() (opentracing.Tracer, io.Closer) {
+	if env.ScopeDsn.Value != "" {
+		scopeTracer := instrumentation.Tracer()
+		return scopeTracer, &nopCloser{}
+	}
+
 	if traceAddr := os.Getenv("JAEGER_TRACE"); traceAddr != "" {
 		tr, err := jaeger.NewUDPTransport(traceAddr, 0)
 		if err != nil {
@@ -49,7 +56,14 @@ func AttachAppContext(app *cli.App) {
 					}
 				}
 
-				span = tracer.StartSpan(name)
+				parent := opentracing.SpanFromContext(ctx)
+				var opts []opentracing.StartSpanOption
+				if parent != nil {
+					tracer = parent.Tracer()
+					opts = append(opts, opentracing.ChildOf(parent.Context()))
+				}
+
+				span = tracer.StartSpan(name, opts...)
 				span.LogFields(log.String("command", strings.Join(os.Args, " ")))
 
 				ctx = opentracing.ContextWithSpan(ctx, span)

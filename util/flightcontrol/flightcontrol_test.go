@@ -8,6 +8,7 @@ import (
 
 	"github.com/pkg/errors"
 	"github.com/stretchr/testify/assert"
+	"go.undefinedlabs.com/scopeagent"
 	"golang.org/x/sync/errgroup"
 )
 
@@ -133,15 +134,15 @@ func TestCancelBoth(t *testing.T) {
 	assert.Equal(t, "", r2)
 	assert.Equal(t, counter, int64(1))
 
-	ret1, err := g.Do(context.TODO(), "foo", f)
+	ret1, err := g.Do(scopeagent.GetContextFromTest(t), "foo", f)
 	assert.NoError(t, err)
 	assert.Equal(t, ret1, "bar")
 
 	f2 := testFunc(100*time.Millisecond, "baz", &counter)
-	ret1, err = g.Do(context.TODO(), "foo", f2)
+	ret1, err = g.Do(scopeagent.GetContextFromTest(t), "foo", f2)
 	assert.NoError(t, err)
 	assert.Equal(t, ret1, "baz")
-	ret1, err = g.Do(context.TODO(), "abc", f)
+	ret1, err = g.Do(scopeagent.GetContextFromTest(t), "abc", f)
 	assert.NoError(t, err)
 	assert.Equal(t, ret1, "bar")
 

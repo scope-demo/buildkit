@@ -24,6 +24,7 @@ import (
 	"github.com/pkg/errors"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
+	"go.undefinedlabs.com/scopeagent"
 )
 
 // Backend is the minimal interface that describes a testing backend.
@@ -45,6 +46,7 @@ type Sandbox interface {
 type BackendConfig struct {
 	Logs       map[string]*bytes.Buffer
 	ConfigFile string
+	TestCtx    context.Context
 }
 
 type Worker interface {
@@ -143,12 +145,14 @@ func Run(t *testing.T, testCases []Test, opt ...TestOpt) {
 				fn := getFunctionName(tc)
 				name := fn + "/worker=" + br.Name() + mv.functionSuffix()
 				func(fn, testName string, br Worker, tc Test, mv matrixValue) {
-					ok := t.Run(testName, func(t *testing.T) {
+					ok := scopeagent.GetTest(t).Run(testName, func(t *testing.T) {
+						testCtx := scopeagent.GetContextFromTest(t)
+
 						defer cleanOnComplete()()
 						if !strings.HasSuffix(fn, "NoParallel") {
 							t.Parallel()
 						}
-						sb, closer, err := newSandbox(br, mirror, mv)
+						sb, closer, err := newSandbox(testCtx, br, mirror, mv)
 						if err != nil {
 							if errors.Cause(err) == ErrorRequirements {
 								t.Skip(err.Error())

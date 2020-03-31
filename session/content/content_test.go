@@ -1,7 +1,6 @@
 package content
 
 import (
-	"context"
 	"io/ioutil"
 	"os"
 	"testing"
@@ -10,15 +9,16 @@ import (
 	"github.com/containerd/containerd/content/local"
 	"github.com/moby/buildkit/session"
 	"github.com/moby/buildkit/session/testutil"
-	"github.com/opencontainers/go-digest"
+	digest "github.com/opencontainers/go-digest"
 	ocispec "github.com/opencontainers/image-spec/specs-go/v1"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
+	"go.undefinedlabs.com/scopeagent"
 	"golang.org/x/sync/errgroup"
 )
 
 func TestContentAttachable(t *testing.T) {
-	ctx := context.TODO()
+	ctx := scopeagent.GetContextFromTest(t)
 	t.Parallel()
 	ids := []string{"store-id-0", "store-id-1"}
 	attachableStores := make(map[string]content.Store)

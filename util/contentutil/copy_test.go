@@ -2,18 +2,18 @@ package contentutil
 
 import (
 	"bytes"
-	"context"
 	"testing"
 
 	"github.com/containerd/containerd/content"
 	digest "github.com/opencontainers/go-digest"
 	ocispec "github.com/opencontainers/image-spec/specs-go/v1"
 	"github.com/stretchr/testify/require"
+	"go.undefinedlabs.com/scopeagent"
 )
 
 func TestCopy(t *testing.T) {
 	t.Parallel()
-	ctx := context.TODO()
+	ctx := scopeagent.GetContextFromTest(t)
 
 	b0 := NewBuffer()
 	b1 := NewBuffer()

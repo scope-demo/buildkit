@@ -11,11 +11,12 @@ import (
 	digest "github.com/opencontainers/go-digest"
 	ocispec "github.com/opencontainers/image-spec/specs-go/v1"
 	"github.com/stretchr/testify/require"
+	"go.undefinedlabs.com/scopeagent"
 )
 
 func TestFetcher(t *testing.T) {
 	t.Parallel()
-	ctx := context.TODO()
+	ctx := scopeagent.GetContextFromTest(t)
 
 	b0 := NewBuffer()
 
@@ -50,7 +51,7 @@ func TestFetcher(t *testing.T) {
 
 func TestSlowFetch(t *testing.T) {
 	t.Parallel()
-	ctx := context.TODO()
+	ctx := scopeagent.GetContextFromTest(t)
 
 	f := &dummySlowFetcher{}
 	p := FromFetcher(f)

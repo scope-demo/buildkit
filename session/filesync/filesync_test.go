@@ -10,11 +10,12 @@ import (
 	"github.com/moby/buildkit/session/testutil"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
+	"go.undefinedlabs.com/scopeagent"
 	"golang.org/x/sync/errgroup"
 )
 
 func TestFileSyncIncludePatterns(t *testing.T) {
-	ctx := context.TODO()
+	ctx := scopeagent.GetContextFromTest(t)
 	t.Parallel()
 	tmpDir, err := ioutil.TempDir("", "fsynctest")
 	require.NoError(t, err)

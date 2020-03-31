@@ -22,11 +22,12 @@ import (
 	digest "github.com/opencontainers/go-digest"
 	"github.com/stretchr/testify/require"
 	bolt "go.etcd.io/bbolt"
+	"go.undefinedlabs.com/scopeagent"
 )
 
 func TestHTTPSource(t *testing.T) {
 	t.Parallel()
-	ctx := context.TODO()
+	ctx := scopeagent.GetContextFromTest(t)
 
 	tmpdir, err := ioutil.TempDir("", "buildkit-state")
 	require.NoError(t, err)
@@ -62,7 +63,7 @@ func TestHTTPSource(t *testing.T) {
 	require.NoError(t, err)
 	defer func() {
 		if ref != nil {
-			ref.Release(context.TODO())
+			ref.Release(scopeagent.GetContextFromTest(t))
 			ref = nil
 		}
 	}()
@@ -71,7 +72,7 @@ func TestHTTPSource(t *testing.T) {
 	require.NoError(t, err)
 	require.Equal(t, dt, []byte("content1"))
 
-	ref.Release(context.TODO())
+	ref.Release(scopeagent.GetContextFromTest(t))
 	ref = nil
 
 	// repeat, should use the etag
@@ -89,7 +90,7 @@ func TestHTTPSource(t *testing.T) {
 	require.NoError(t, err)
 	defer func() {
 		if ref != nil {
-			ref.Release(context.TODO())
+			ref.Release(scopeagent.GetContextFromTest(t))
 			ref = nil
 		}
 	}()
@@ -98,7 +99,7 @@ func TestHTTPSource(t *testing.T) {
 	require.NoError(t, err)
 	require.Equal(t, dt, []byte("content1"))
 
-	ref.Release(context.TODO())
+	ref.Release(scopeagent.GetContextFromTest(t))
 	ref = nil
 
 	resp2 := httpserver.Response{
@@ -125,7 +126,7 @@ func TestHTTPSource(t *testing.T) {
 	require.NoError(t, err)
 	defer func() {
 		if ref != nil {
-			ref.Release(context.TODO())
+			ref.Release(scopeagent.GetContextFromTest(t))
 			ref = nil
 		}
 	}()
@@ -134,13 +135,13 @@ func TestHTTPSource(t *testing.T) {
 	require.NoError(t, err)
 	require.Equal(t, dt, []byte("content2"))
 
-	ref.Release(context.TODO())
+	ref.Release(scopeagent.GetContextFromTest(t))
 	ref = nil
 }
 
 func TestHTTPDefaultName(t *testing.T) {
 	t.Parallel()
-	ctx := context.TODO()
+	ctx := scopeagent.GetContextFromTest(t)
 
 	tmpdir, err := ioutil.TempDir("", "buildkit-state")
 	require.NoError(t, err)
@@ -174,7 +175,7 @@ func TestHTTPDefaultName(t *testing.T) {
 	require.NoError(t, err)
 	defer func() {
 		if ref != nil {
-			ref.Release(context.TODO())
+			ref.Release(scopeagent.GetContextFromTest(t))
 			ref = nil
 		}
 	}()
@@ -183,13 +184,13 @@ func TestHTTPDefaultName(t *testing.T) {
 	require.NoError(t, err)
 	require.Equal(t, dt, []byte("content1"))
 
-	ref.Release(context.TODO())
+	ref.Release(scopeagent.GetContextFromTest(t))
 	ref = nil
 }
 
 func TestHTTPInvalidURL(t *testing.T) {
 	t.Parallel()
-	ctx := context.TODO()
+	ctx := scopeagent.GetContextFromTest(t)
 
 	tmpdir, err := ioutil.TempDir("", "buildkit-state")
 	require.NoError(t, err)
@@ -213,7 +214,7 @@ func TestHTTPInvalidURL(t *testing.T) {
 
 func TestHTTPChecksum(t *testing.T) {
 	t.Parallel()
-	ctx := context.TODO()
+	ctx := scopeagent.GetContextFromTest(t)
 
 	tmpdir, err := ioutil.TempDir("", "buildkit-state")
 	require.NoError(t, err)
@@ -269,7 +270,7 @@ func TestHTTPChecksum(t *testing.T) {
 	require.NoError(t, err)
 	defer func() {
 		if ref != nil {
-			ref.Release(context.TODO())
+			ref.Release(scopeagent.GetContextFromTest(t))
 			ref = nil
 		}
 	}()
@@ -282,7 +283,7 @@ func TestHTTPChecksum(t *testing.T) {
 	require.Equal(t, server.Stats("/foo").AllRequests, 2)
 	require.Equal(t, server.Stats("/foo").CachedRequests, 0)
 
-	ref.Release(context.TODO())
+	ref.Release(scopeagent.GetContextFromTest(t))
 	ref = nil
 
 }

@@ -8,12 +8,13 @@ import (
 	"time"
 
 	"github.com/stretchr/testify/assert"
+	"go.undefinedlabs.com/scopeagent"
 	"golang.org/x/sync/errgroup"
 )
 
 func TestProgress(t *testing.T) {
 	t.Parallel()
-	s, err := calc(context.TODO(), 4, "calc")
+	s, err := calc(scopeagent.GetContextFromTest(t), 4, "calc")
 	assert.NoError(t, err)
 	assert.Equal(t, 10, s)
 

@@ -3,7 +3,9 @@ package integration
 import (
 	"bufio"
 	"bytes"
+	"context"
 	"fmt"
+	"go.undefinedlabs.com/scopeagent/env"
 	"io/ioutil"
 	"os"
 	"os/exec"
@@ -17,6 +19,7 @@ import (
 	"github.com/google/shlex"
 	"github.com/pkg/errors"
 	"github.com/sirupsen/logrus"
+	"go.undefinedlabs.com/scopeagent/instrumentation/process"
 )
 
 const buildkitdConfigFile = "buildkitd.toml"
@@ -71,9 +74,10 @@ func (sb *sandbox) Value(k string) interface{} {
 	return sb.mv.values[k].value
 }
 
-func newSandbox(w Worker, mirror string, mv matrixValue) (s Sandbox, cl func() error, err error) {
+func newSandbox(testCtx context.Context, w Worker, mirror string, mv matrixValue) (s Sandbox, cl func() error, err error) {
 	cfg := &BackendConfig{
-		Logs: make(map[string]*bytes.Buffer),
+		Logs:    make(map[string]*bytes.Buffer),
+		TestCtx: testCtx,
 	}
 
 	var upt []ConfigUpdater
@@ -160,7 +164,14 @@ func runBuildkitd(conf *BackendConfig, args []string, logs map[string]*bytes.Buf
 
 	args = append(args, "--root", tmpdir, "--addr", address, "--debug")
 	cmd := exec.Command(args[0], args[1:]...)
-	cmd.Env = append(os.Environ(), "BUILDKIT_DEBUG_EXEC_OUTPUT=1", "BUILDKIT_DEBUG_PANIC_ON_ERROR=1", "TMPDIR="+filepath.Join(tmpdir, "tmp"))
+
+	cmd.Env = append(os.Environ(), "SCOPE_SERVICE=builkitd_sandbox", "BUILDKIT_DEBUG_EXEC_OUTPUT=1", "BUILDKIT_DEBUG_PANIC_ON_ERROR=1", "TMPDIR="+filepath.Join(tmpdir, "tmp"))
+	if env.ScopeDsn.Value != "" {
+		if conf.TestCtx != nil {
+			process.InjectToCmd(conf.TestCtx, cmd)
+		}
+	}
+
 	cmd.SysProcAttr = &syscall.SysProcAttr{
 		Setsid: true, // stretch sudo needs this for sigterm
 	}
