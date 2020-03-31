@@ -67,13 +67,13 @@ require (
 	github.com/vishvananda/netns v0.0.0-20180720170159-13995c7128cc // indirect
 	go.etcd.io/bbolt v1.3.3
 	go.opencensus.io v0.22.3 // indirect
-	go.undefinedlabs.com/scopeagent v0.1.15-0.20200324120536-774922f855aa
+	go.undefinedlabs.com/scopeagent v0.1.16-0.20200331093855-e2472fc6a6ac
 	golang.org/x/crypto v0.0.0-20200323165209-0ec3e9974c59
 	golang.org/x/net v0.0.0-20200324143707-d3edc9973b7e
 	golang.org/x/sync v0.0.0-20200317015054-43a5402ce75a
-	golang.org/x/sys v0.0.0-20200323222414-85ca7c5b95cd
+	golang.org/x/sys v0.0.0-20200327173247-9dae0f8f5775
 	golang.org/x/time v0.0.0-20191024005414-555d28b269f0
-	google.golang.org/genproto v0.0.0-20200323114720-3f67cca34472
+	google.golang.org/genproto v0.0.0-20200330113809-af700f360a68
 	google.golang.org/grpc v1.28.0
 	gopkg.in/check.v1 v1.0.0-20200227125254-8fa46927fb4f // indirect
 	gopkg.in/yaml.v2 v2.2.8 // indirect
