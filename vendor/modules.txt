@@ -295,7 +295,7 @@ go.opencensus.io/internal
 go.opencensus.io/trace
 go.opencensus.io/trace/internal
 go.opencensus.io/trace/tracestate
-# go.undefinedlabs.com/scopeagent v0.1.16-0.20200331131521-27b7d3fec374
+# go.undefinedlabs.com/scopeagent v0.1.16-0.20200401134723-03f0db1079b2
 go.undefinedlabs.com/scopeagent
 go.undefinedlabs.com/scopeagent/agent
 go.undefinedlabs.com/scopeagent/ast
@@ -365,7 +365,7 @@ google.golang.org/appengine/internal/datastore
 google.golang.org/appengine/internal/log
 google.golang.org/appengine/internal/modules
 google.golang.org/appengine/internal/remote_api
-# google.golang.org/genproto v0.0.0-20200331122359-1ee6d9798940
+# google.golang.org/genproto v0.0.0-20200401122417-09ab7b7031d2
 google.golang.org/genproto/googleapis/rpc/status
 # google.golang.org/grpc v1.28.0
 google.golang.org/grpc
