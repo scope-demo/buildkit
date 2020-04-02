@@ -169,7 +169,7 @@ func newClient(ctx context.Context, address string) (*client.Client, error) {
 		opts = append(opts, client.WithTracer(span.Tracer()))
 	}
 
-	return client.New(ctx, address, opts)
+	return client.New(ctx, address, opts...)
 }
 
 func TestIntegration(t *testing.T) {

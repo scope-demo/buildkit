@@ -145,7 +145,7 @@ func newClient(ctx context.Context, address string) (*Client, error) {
 		opts = append(opts, WithTracer(span.Tracer()))
 	}
 
-	return New(ctx, address, opts)
+	return New(ctx, address, opts...)
 }
 
 // moby/buildkit#1336
