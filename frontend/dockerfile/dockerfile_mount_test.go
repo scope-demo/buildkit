@@ -47,7 +47,7 @@ RUN --mount=target=/context [ "$(cat /context/testfile)" == "contents0" ]
 	require.NoError(t, err)
 	defer os.RemoveAll(dir)
 
-	c, err := client.New(testutil.GetContext(t), sb.Address())
+	c, err := newClient(testutil.GetContext(t), sb.Address())
 	require.NoError(t, err)
 	defer c.Close()
 
@@ -77,7 +77,7 @@ RUN [ ! -f /mytmp/foo ]
 	require.NoError(t, err)
 	defer os.RemoveAll(dir)
 
-	c, err := client.New(testutil.GetContext(t), sb.Address())
+	c, err := newClient(testutil.GetContext(t), sb.Address())
 	require.NoError(t, err)
 	defer c.Close()
 
@@ -114,7 +114,7 @@ COPY --from=second /unique /unique
 	require.NoError(t, err)
 	defer os.RemoveAll(dir)
 
-	c, err := client.New(testutil.GetContext(t), sb.Address())
+	c, err := newClient(testutil.GetContext(t), sb.Address())
 	require.NoError(t, err)
 	defer c.Close()
 
@@ -185,7 +185,7 @@ RUN --mount=type=cache,target=/mycache,uid=1001,gid=1002,mode=0751 [ "$(stat -c 
 	require.NoError(t, err)
 	defer os.RemoveAll(dir)
 
-	c, err := client.New(testutil.GetContext(t), sb.Address())
+	c, err := newClient(testutil.GetContext(t), sb.Address())
 	require.NoError(t, err)
 	defer c.Close()
 
@@ -219,7 +219,7 @@ RUN --mount=type=cache,target=/mycache [ -f /mycache/foo ]
 	require.NoError(t, err)
 	defer os.RemoveAll(dir)
 
-	c, err := client.New(testutil.GetContext(t), sb.Address())
+	c, err := newClient(testutil.GetContext(t), sb.Address())
 	require.NoError(t, err)
 	defer c.Close()
 

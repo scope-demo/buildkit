@@ -52,7 +52,7 @@ RUN ip link show eth0
 	require.NoError(t, err)
 	defer os.RemoveAll(dir)
 
-	c, err := client.New(testutil.GetContext(t), sb.Address())
+	c, err := newClient(testutil.GetContext(t), sb.Address())
 	require.NoError(t, err)
 	defer c.Close()
 
@@ -90,7 +90,7 @@ RUN --network=none ! ip link show eth0
 	require.NoError(t, err)
 	defer os.RemoveAll(dir)
 
-	c, err := client.New(testutil.GetContext(t), sb.Address())
+	c, err := newClient(testutil.GetContext(t), sb.Address())
 	require.NoError(t, err)
 	defer c.Close()
 
@@ -133,7 +133,7 @@ RUN --network=host nc 127.0.0.1 %s | grep foo
 	require.NoError(t, err)
 	defer os.RemoveAll(dir)
 
-	c, err := client.New(testutil.GetContext(t), sb.Address())
+	c, err := newClient(testutil.GetContext(t), sb.Address())
 	require.NoError(t, err)
 	defer c.Close()
 
@@ -179,7 +179,7 @@ RUN --network=none ! nc -z 127.0.0.1 %s
 	require.NoError(t, err)
 	defer os.RemoveAll(dir)
 
-	c, err := client.New(testutil.GetContext(t), sb.Address())
+	c, err := newClient(testutil.GetContext(t), sb.Address())
 	require.NoError(t, err)
 	defer c.Close()
 

@@ -32,7 +32,7 @@ func testClientGatewaySolve(t *testing.T, sb integration.Sandbox) {
 
 	ctx := testutil.GetContext(t)
 
-	c, err := New(ctx, sb.Address())
+	c, err := newClient(ctx, sb.Address())
 	require.NoError(t, err)
 	defer c.Close()
 
@@ -110,7 +110,7 @@ func testClientGatewayFailedSolve(t *testing.T, sb integration.Sandbox) {
 
 	ctx := testutil.GetContext(t)
 
-	c, err := New(ctx, sb.Address())
+	c, err := newClient(ctx, sb.Address())
 	require.NoError(t, err)
 	defer c.Close()
 
@@ -128,7 +128,7 @@ func testClientGatewayEmptySolve(t *testing.T, sb integration.Sandbox) {
 
 	ctx := testutil.GetContext(t)
 
-	c, err := New(ctx, sb.Address())
+	c, err := newClient(ctx, sb.Address())
 	require.NoError(t, err)
 	defer c.Close()
 
@@ -152,7 +152,7 @@ func testNoBuildID(t *testing.T, sb integration.Sandbox) {
 
 	ctx := testutil.GetContext(t)
 
-	c, err := New(ctx, sb.Address())
+	c, err := newClient(ctx, sb.Address())
 	require.NoError(t, err)
 	defer c.Close()
 
@@ -167,7 +167,7 @@ func testUnknownBuildID(t *testing.T, sb integration.Sandbox) {
 
 	ctx := testutil.GetContext(t)
 
-	c, err := New(ctx, sb.Address())
+	c, err := newClient(ctx, sb.Address())
 	require.NoError(t, err)
 	defer c.Close()
 

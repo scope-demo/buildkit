@@ -5,8 +5,8 @@ import (
 	"testing"
 
 	"github.com/containerd/containerd/platforms"
+	"github.com/moby/buildkit/util/testutil"
 	"github.com/stretchr/testify/require"
-	"go.undefinedlabs.com/scopeagent"
 )
 
 func TestDefinitionEquivalence(t *testing.T) {
@@ -25,7 +25,7 @@ func TestDefinitionEquivalence(t *testing.T) {
 		{"mount", Image("busybox").Run(Shlex(`sh -c "echo foo > /out/foo"`)).AddMount("/out", Scratch())},
 	} {
 		tc := tc
-		scopeagent.GetTest(t).Run(tc.name, func(t *testing.T) {
+		testutil.GetTracedTest(t).Run(tc.name, func(t *testing.T) {
 			t.Parallel()
 
 			def, err := tc.state.Marshal()

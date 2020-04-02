@@ -10,6 +10,7 @@ import (
 	"encoding/json"
 	"encoding/pem"
 	"fmt"
+	"github.com/opentracing/opentracing-go"
 	"io"
 	"io/ioutil"
 	"net"
@@ -138,11 +139,20 @@ func newContainerd(cdAddress string) (*containerd.Client, error) {
 	return containerd.New(cdAddress, containerd.WithTimeout(60*time.Second), containerd.WithDefaultRuntime("io.containerd.runtime.v1.linux"))
 }
 
+func newClient(ctx context.Context, address string) (*Client, error) {
+	var opts []ClientOpt
+	if span := opentracing.SpanFromContext(ctx); span != nil {
+		opts = append(opts, WithTracer(span.Tracer()))
+	}
+
+	return New(ctx, address, opts)
+}
+
 // moby/buildkit#1336
 func testCacheExportCacheKeyLoop(t *testing.T, sb integration.Sandbox) {
 	testutil.SetTestCode(t)
 
-	c, err := New(testutil.GetContext(t), sb.Address())
+	c, err := newClient(testutil.GetContext(t), sb.Address())
 	require.NoError(t, err)
 	defer c.Close()
 
@@ -194,7 +204,7 @@ func testBridgeNetworking(t *testing.T, sb integration.Sandbox) {
 	if sb.Rootless() {
 		t.SkipNow()
 	}
-	c, err := New(testutil.GetContext(t), sb.Address())
+	c, err := newClient(testutil.GetContext(t), sb.Address())
 	require.NoError(t, err)
 	defer c.Close()
 
@@ -219,7 +229,7 @@ func testHostNetworking(t *testing.T, sb integration.Sandbox) {
 	if netMode == hostNetwork {
 		allowedEntitlements = []entitlements.Entitlement{entitlements.EntitlementNetworkHost}
 	}
-	c, err := New(testutil.GetContext(t), sb.Address())
+	c, err := newClient(testutil.GetContext(t), sb.Address())
 	require.NoError(t, err)
 	defer c.Close()
 
@@ -244,7 +254,7 @@ func testHostNetworking(t *testing.T, sb integration.Sandbox) {
 func testExportBusyboxLocal(t *testing.T, sb integration.Sandbox) {
 	testutil.SetTestCode(t)
 
-	c, err := New(testutil.GetContext(t), sb.Address())
+	c, err := newClient(testutil.GetContext(t), sb.Address())
 	require.NoError(t, err)
 	defer c.Close()
 
@@ -284,7 +294,7 @@ func testHostnameLookup(t *testing.T, sb integration.Sandbox) {
 		t.SkipNow()
 	}
 
-	c, err := New(testutil.GetContext(t), sb.Address())
+	c, err := newClient(testutil.GetContext(t), sb.Address())
 	require.NoError(t, err)
 	defer c.Close()
 
@@ -301,7 +311,7 @@ func testHostnameLookup(t *testing.T, sb integration.Sandbox) {
 func testStdinClosed(t *testing.T, sb integration.Sandbox) {
 	testutil.SetTestCode(t)
 
-	c, err := New(testutil.GetContext(t), sb.Address())
+	c, err := newClient(testutil.GetContext(t), sb.Address())
 	require.NoError(t, err)
 	defer c.Close()
 
@@ -317,7 +327,7 @@ func testStdinClosed(t *testing.T, sb integration.Sandbox) {
 func testSSHMount(t *testing.T, sb integration.Sandbox) {
 	testutil.SetTestCode(t)
 
-	c, err := New(testutil.GetContext(t), sb.Address())
+	c, err := newClient(testutil.GetContext(t), sb.Address())
 	require.NoError(t, err)
 	defer c.Close()
 
@@ -485,7 +495,7 @@ func testSSHMount(t *testing.T, sb integration.Sandbox) {
 func testExtraHosts(t *testing.T, sb integration.Sandbox) {
 	testutil.SetTestCode(t)
 
-	c, err := New(testutil.GetContext(t), sb.Address())
+	c, err := newClient(testutil.GetContext(t), sb.Address())
 	require.NoError(t, err)
 	defer c.Close()
 
@@ -502,7 +512,7 @@ func testExtraHosts(t *testing.T, sb integration.Sandbox) {
 func testNetworkMode(t *testing.T, sb integration.Sandbox) {
 	testutil.SetTestCode(t)
 
-	c, err := New(testutil.GetContext(t), sb.Address())
+	c, err := newClient(testutil.GetContext(t), sb.Address())
 	require.NoError(t, err)
 	defer c.Close()
 
@@ -533,7 +543,7 @@ func testPushByDigest(t *testing.T, sb integration.Sandbox) {
 	testutil.SetTestCode(t)
 
 	requiresLinux(t)
-	c, err := New(testutil.GetContext(t), sb.Address())
+	c, err := newClient(testutil.GetContext(t), sb.Address())
 	require.NoError(t, err)
 	defer c.Close()
 
@@ -604,7 +614,7 @@ func testSecurityMode(t *testing.T, sb integration.Sandbox) {
 		allowedEntitlements = []entitlements.Entitlement{entitlements.EntitlementSecurityInsecure}
 	}
 
-	c, err := New(testutil.GetContext(t), sb.Address())
+	c, err := newClient(testutil.GetContext(t), sb.Address())
 	require.NoError(t, err)
 	defer c.Close()
 
@@ -639,7 +649,7 @@ func testSecurityModeSysfs(t *testing.T, sb integration.Sandbox) {
 		allowedEntitlements = []entitlements.Entitlement{entitlements.EntitlementSecurityInsecure}
 	}
 
-	c, err := New(testutil.GetContext(t), sb.Address())
+	c, err := newClient(testutil.GetContext(t), sb.Address())
 	require.NoError(t, err)
 	defer c.Close()
 
@@ -667,7 +677,7 @@ func testSecurityModeSysfs(t *testing.T, sb integration.Sandbox) {
 func testSecurityModeErrors(t *testing.T, sb integration.Sandbox) {
 	testutil.SetTestCode(t)
 
-	c, err := New(testutil.GetContext(t), sb.Address())
+	c, err := newClient(testutil.GetContext(t), sb.Address())
 	require.NoError(t, err)
 	defer c.Close()
 	secMode := sb.Value("secmode")
@@ -702,7 +712,7 @@ func testFrontendImageNaming(t *testing.T, sb integration.Sandbox) {
 	testutil.SetTestCode(t)
 
 	requiresLinux(t)
-	c, err := New(testutil.GetContext(t), sb.Address())
+	c, err := newClient(testutil.GetContext(t), sb.Address())
 	require.NoError(t, err)
 	defer c.Close()
 
@@ -856,7 +866,7 @@ func testFrontendImageNaming(t *testing.T, sb integration.Sandbox) {
 func testSecretMounts(t *testing.T, sb integration.Sandbox) {
 	testutil.SetTestCode(t)
 
-	c, err := New(testutil.GetContext(t), sb.Address())
+	c, err := newClient(testutil.GetContext(t), sb.Address())
 	require.NoError(t, err)
 	defer c.Close()
 
@@ -918,7 +928,7 @@ func testTmpfsMounts(t *testing.T, sb integration.Sandbox) {
 	testutil.SetTestCode(t)
 
 	requiresLinux(t)
-	c, err := New(testutil.GetContext(t), sb.Address())
+	c, err := newClient(testutil.GetContext(t), sb.Address())
 	require.NoError(t, err)
 	defer c.Close()
 
@@ -936,7 +946,7 @@ func testLocalSymlinkEscape(t *testing.T, sb integration.Sandbox) {
 	testutil.SetTestCode(t)
 
 	requiresLinux(t)
-	c, err := New(testutil.GetContext(t), sb.Address())
+	c, err := newClient(testutil.GetContext(t), sb.Address())
 	require.NoError(t, err)
 	defer c.Close()
 
@@ -995,7 +1005,7 @@ func testRelativeWorkDir(t *testing.T, sb integration.Sandbox) {
 	testutil.SetTestCode(t)
 
 	requiresLinux(t)
-	c, err := New(testutil.GetContext(t), sb.Address())
+	c, err := newClient(testutil.GetContext(t), sb.Address())
 	require.NoError(t, err)
 	defer c.Close()
 
@@ -1031,7 +1041,7 @@ func testFileOpMkdirMkfile(t *testing.T, sb integration.Sandbox) {
 	testutil.SetTestCode(t)
 
 	requiresLinux(t)
-	c, err := New(testutil.GetContext(t), sb.Address())
+	c, err := newClient(testutil.GetContext(t), sb.Address())
 	require.NoError(t, err)
 	defer c.Close()
 
@@ -1068,7 +1078,7 @@ func testFileOpCopyRm(t *testing.T, sb integration.Sandbox) {
 	testutil.SetTestCode(t)
 
 	requiresLinux(t)
-	c, err := New(testutil.GetContext(t), sb.Address())
+	c, err := newClient(testutil.GetContext(t), sb.Address())
 	require.NoError(t, err)
 	defer c.Close()
 
@@ -1140,7 +1150,7 @@ func testFileOpRmWildcard(t *testing.T, sb integration.Sandbox) {
 	testutil.SetTestCode(t)
 
 	requiresLinux(t)
-	c, err := New(testutil.GetContext(t), sb.Address())
+	c, err := newClient(testutil.GetContext(t), sb.Address())
 	require.NoError(t, err)
 	defer c.Close()
 
@@ -1198,7 +1208,7 @@ func testFileOpRmWildcard(t *testing.T, sb integration.Sandbox) {
 func testCallDiskUsage(t *testing.T, sb integration.Sandbox) {
 	testutil.SetTestCode(t)
 
-	c, err := New(testutil.GetContext(t), sb.Address())
+	c, err := newClient(testutil.GetContext(t), sb.Address())
 	require.NoError(t, err)
 	defer c.Close()
 	_, err = c.DiskUsage(testutil.GetContext(t))
@@ -1209,7 +1219,7 @@ func testBuildMultiMount(t *testing.T, sb integration.Sandbox) {
 	testutil.SetTestCode(t)
 
 	requiresLinux(t)
-	c, err := New(testutil.GetContext(t), sb.Address())
+	c, err := newClient(testutil.GetContext(t), sb.Address())
 	require.NoError(t, err)
 	defer c.Close()
 
@@ -1231,7 +1241,7 @@ func testBuildMultiMount(t *testing.T, sb integration.Sandbox) {
 func testBuildHTTPSource(t *testing.T, sb integration.Sandbox) {
 	testutil.SetTestCode(t)
 
-	c, err := New(testutil.GetContext(t), sb.Address())
+	c, err := newClient(testutil.GetContext(t), sb.Address())
 	require.NoError(t, err)
 	defer c.Close()
 
@@ -1328,7 +1338,7 @@ func testResolveAndHosts(t *testing.T, sb integration.Sandbox) {
 	testutil.SetTestCode(t)
 
 	requiresLinux(t)
-	c, err := New(testutil.GetContext(t), sb.Address())
+	c, err := newClient(testutil.GetContext(t), sb.Address())
 	require.NoError(t, err)
 	defer c.Close()
 
@@ -1373,7 +1383,7 @@ func testUser(t *testing.T, sb integration.Sandbox) {
 	testutil.SetTestCode(t)
 
 	requiresLinux(t)
-	c, err := New(testutil.GetContext(t), sb.Address())
+	c, err := newClient(testutil.GetContext(t), sb.Address())
 	require.NoError(t, err)
 	defer c.Close()
 
@@ -1431,7 +1441,7 @@ func testOCIExporter(t *testing.T, sb integration.Sandbox) {
 	testutil.SetTestCode(t)
 
 	requiresLinux(t)
-	c, err := New(testutil.GetContext(t), sb.Address())
+	c, err := newClient(testutil.GetContext(t), sb.Address())
 	require.NoError(t, err)
 	defer c.Close()
 
@@ -1536,7 +1546,7 @@ func testFrontendMetadataReturn(t *testing.T, sb integration.Sandbox) {
 	testutil.SetTestCode(t)
 
 	requiresLinux(t)
-	c, err := New(testutil.GetContext(t), sb.Address())
+	c, err := newClient(testutil.GetContext(t), sb.Address())
 	require.NoError(t, err)
 	defer c.Close()
 
@@ -1569,7 +1579,7 @@ func testFrontendUseSolveResults(t *testing.T, sb integration.Sandbox) {
 	testutil.SetTestCode(t)
 
 	requiresLinux(t)
-	c, err := New(testutil.GetContext(t), sb.Address())
+	c, err := newClient(testutil.GetContext(t), sb.Address())
 	require.NoError(t, err)
 	defer c.Close()
 
@@ -1637,7 +1647,7 @@ func testExporterTargetExists(t *testing.T, sb integration.Sandbox) {
 	testutil.SetTestCode(t)
 
 	requiresLinux(t)
-	c, err := New(testutil.GetContext(t), sb.Address())
+	c, err := newClient(testutil.GetContext(t), sb.Address())
 	require.NoError(t, err)
 	defer c.Close()
 
@@ -1669,7 +1679,7 @@ func testTarExporterWithSocket(t *testing.T, sb integration.Sandbox) {
 	testutil.SetTestCode(t)
 
 	requiresLinux(t)
-	c, err := New(testutil.GetContext(t), sb.Address())
+	c, err := newClient(testutil.GetContext(t), sb.Address())
 	require.NoError(t, err)
 	defer c.Close()
 
@@ -1694,7 +1704,7 @@ func testTarExporterWithSocket(t *testing.T, sb integration.Sandbox) {
 // moby/buildkit#1418
 func testTarExporterSymlink(t *testing.T, sb integration.Sandbox) {
 	requiresLinux(t)
-	c, err := New(context.TODO(), sb.Address())
+	c, err := newClient(context.TODO(), sb.Address())
 	require.NoError(t, err)
 	defer c.Close()
 
@@ -1739,7 +1749,7 @@ func testBuildExportWithUncompressed(t *testing.T, sb integration.Sandbox) {
 	testutil.SetTestCode(t)
 
 	requiresLinux(t)
-	c, err := New(testutil.GetContext(t), sb.Address())
+	c, err := newClient(testutil.GetContext(t), sb.Address())
 	require.NoError(t, err)
 	defer c.Close()
 
@@ -1856,7 +1866,7 @@ func testBuildPushAndValidate(t *testing.T, sb integration.Sandbox) {
 	testutil.SetTestCode(t)
 
 	requiresLinux(t)
-	c, err := New(testutil.GetContext(t), sb.Address())
+	c, err := newClient(testutil.GetContext(t), sb.Address())
 	require.NoError(t, err)
 	defer c.Close()
 
@@ -2061,7 +2071,7 @@ func testBasicCacheImportExport(t *testing.T, sb integration.Sandbox, cacheOptio
 	testutil.SetTestCode(t)
 
 	requiresLinux(t)
-	c, err := New(testutil.GetContext(t), sb.Address())
+	c, err := newClient(testutil.GetContext(t), sb.Address())
 	require.NoError(t, err)
 	defer c.Close()
 
@@ -2201,7 +2211,7 @@ func testBasicInlineCacheImportExport(t *testing.T, sb integration.Sandbox) {
 	}
 	require.NoError(t, err)
 
-	c, err := New(testutil.GetContext(t), sb.Address())
+	c, err := newClient(testutil.GetContext(t), sb.Address())
 	require.NoError(t, err)
 	defer c.Close()
 
@@ -2346,7 +2356,7 @@ func testCachedMounts(t *testing.T, sb integration.Sandbox) {
 	testutil.SetTestCode(t)
 
 	requiresLinux(t)
-	c, err := New(testutil.GetContext(t), sb.Address())
+	c, err := newClient(testutil.GetContext(t), sb.Address())
 	require.NoError(t, err)
 	defer c.Close()
 
@@ -2413,7 +2423,7 @@ func testSharedCacheMounts(t *testing.T, sb integration.Sandbox) {
 	testutil.SetTestCode(t)
 
 	requiresLinux(t)
-	c, err := New(testutil.GetContext(t), sb.Address())
+	c, err := newClient(testutil.GetContext(t), sb.Address())
 	require.NoError(t, err)
 	defer c.Close()
 
@@ -2439,7 +2449,7 @@ func testLockedCacheMounts(t *testing.T, sb integration.Sandbox) {
 	testutil.SetTestCode(t)
 
 	requiresLinux(t)
-	c, err := New(testutil.GetContext(t), sb.Address())
+	c, err := newClient(testutil.GetContext(t), sb.Address())
 	require.NoError(t, err)
 	defer c.Close()
 
@@ -2465,7 +2475,7 @@ func testDuplicateCacheMount(t *testing.T, sb integration.Sandbox) {
 	testutil.SetTestCode(t)
 
 	requiresLinux(t)
-	c, err := New(testutil.GetContext(t), sb.Address())
+	c, err := newClient(testutil.GetContext(t), sb.Address())
 	require.NoError(t, err)
 	defer c.Close()
 
@@ -2486,7 +2496,7 @@ func testCacheMountNoCache(t *testing.T, sb integration.Sandbox) {
 	testutil.SetTestCode(t)
 
 	requiresLinux(t)
-	c, err := New(testutil.GetContext(t), sb.Address())
+	c, err := newClient(testutil.GetContext(t), sb.Address())
 	require.NoError(t, err)
 	defer c.Close()
 
@@ -2527,7 +2537,7 @@ func testDuplicateWhiteouts(t *testing.T, sb integration.Sandbox) {
 	testutil.SetTestCode(t)
 
 	requiresLinux(t)
-	c, err := New(testutil.GetContext(t), sb.Address())
+	c, err := newClient(testutil.GetContext(t), sb.Address())
 	require.NoError(t, err)
 	defer c.Close()
 
@@ -2600,7 +2610,7 @@ func testWhiteoutParentDir(t *testing.T, sb integration.Sandbox) {
 	testutil.SetTestCode(t)
 
 	requiresLinux(t)
-	c, err := New(testutil.GetContext(t), sb.Address())
+	c, err := newClient(testutil.GetContext(t), sb.Address())
 	require.NoError(t, err)
 	defer c.Close()
 
@@ -2667,7 +2677,7 @@ func testWhiteoutParentDir(t *testing.T, sb integration.Sandbox) {
 func testSchema1Image(t *testing.T, sb integration.Sandbox) {
 	testutil.SetTestCode(t)
 
-	c, err := New(testutil.GetContext(t), sb.Address())
+	c, err := newClient(testutil.GetContext(t), sb.Address())
 	require.NoError(t, err)
 	defer c.Close()
 
@@ -2686,7 +2696,7 @@ func testSchema1Image(t *testing.T, sb integration.Sandbox) {
 func testMountWithNoSource(t *testing.T, sb integration.Sandbox) {
 	testutil.SetTestCode(t)
 
-	c, err := New(testutil.GetContext(t), sb.Address())
+	c, err := newClient(testutil.GetContext(t), sb.Address())
 	require.NoError(t, err)
 	defer c.Close()
 
@@ -2717,7 +2727,7 @@ func testMountWithNoSource(t *testing.T, sb integration.Sandbox) {
 func testReadonlyRootFS(t *testing.T, sb integration.Sandbox) {
 	testutil.SetTestCode(t)
 
-	c, err := New(testutil.GetContext(t), sb.Address())
+	c, err := newClient(testutil.GetContext(t), sb.Address())
 	require.NoError(t, err)
 	defer c.Close()
 
@@ -2746,7 +2756,7 @@ func testReadonlyRootFS(t *testing.T, sb integration.Sandbox) {
 func testProxyEnv(t *testing.T, sb integration.Sandbox) {
 	testutil.SetTestCode(t)
 
-	c, err := New(testutil.GetContext(t), sb.Address())
+	c, err := newClient(testutil.GetContext(t), sb.Address())
 	require.NoError(t, err)
 	defer c.Close()
 
@@ -2915,7 +2925,7 @@ func testInvalidExporter(t *testing.T, sb integration.Sandbox) {
 	testutil.SetTestCode(t)
 
 	requiresLinux(t)
-	c, err := New(testutil.GetContext(t), sb.Address())
+	c, err := newClient(testutil.GetContext(t), sb.Address())
 	require.NoError(t, err)
 	defer c.Close()
 
@@ -2990,7 +3000,7 @@ func testParallelLocalBuilds(t *testing.T, sb integration.Sandbox) {
 	ctx, cancel := context.WithCancel(testutil.GetContext(t))
 	defer cancel()
 
-	c, err := New(ctx, sb.Address())
+	c, err := newClient(ctx, sb.Address())
 	require.NoError(t, err)
 	defer c.Close()
 

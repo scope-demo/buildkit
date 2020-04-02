@@ -40,7 +40,7 @@ RUN --mount=type=secret,required=false,mode=741,uid=100,gid=102,target=/mysecret
 	require.NoError(t, err)
 	defer os.RemoveAll(dir)
 
-	c, err := client.New(testutil.GetContext(t), sb.Address())
+	c, err := newClient(testutil.GetContext(t), sb.Address())
 	require.NoError(t, err)
 	defer c.Close()
 

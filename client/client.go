@@ -44,9 +44,14 @@ func New(ctx context.Context, address string, opts ...ClientOpt) (*Client, error
 			needWithInsecure = false
 		}
 		if wt, ok := o.(*withTracer); ok {
-			gopts = append(gopts,
-				grpc.WithUnaryInterceptor(otgrpc.OpenTracingClientInterceptor(wt.tracer, otgrpc.LogPayloads())),
-				grpc.WithStreamInterceptor(otgrpc.OpenTracingStreamClientInterceptor(wt.tracer)))
+			//If Scope is running...
+			if env.ScopeDsn.Value != "" {
+				gopts = append(gopts, scopegrpc.GetClientInterceptors()...)
+			} else {
+				gopts = append(gopts,
+					grpc.WithUnaryInterceptor(otgrpc.OpenTracingClientInterceptor(wt.tracer, otgrpc.LogPayloads())),
+					grpc.WithStreamInterceptor(otgrpc.OpenTracingStreamClientInterceptor(wt.tracer)))
+			}
 		}
 		if wd, ok := o.(*withDialer); ok {
 			gopts = append(gopts, grpc.WithDialer(wd.dialer))
@@ -67,11 +72,6 @@ func New(ctx context.Context, address string, opts ...ClientOpt) (*Client, error
 	}
 	if address == "" {
 		address = appdefaults.Address
-	}
-
-	//If Scope is running...
-	if env.ScopeDsn.Value != "" {
-		gopts = append(gopts, scopegrpc.GetClientInterceptors()...)
 	}
 
 	conn, err := grpc.DialContext(ctx, address, gopts...)

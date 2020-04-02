@@ -3,6 +3,7 @@ package frontend
 import (
 	"context"
 	"github.com/moby/buildkit/util/testutil"
+	"github.com/opentracing/opentracing-go"
 	"io/ioutil"
 	"os"
 	"path/filepath"
@@ -37,12 +38,21 @@ func TestFrontendIntegration(t *testing.T) {
 	})
 }
 
+func newClient(ctx context.Context, address string) (*client.Client, error) {
+	var opts []client.ClientOpt
+	if span := opentracing.SpanFromContext(ctx); span != nil {
+		opts = append(opts, client.WithTracer(span.Tracer()))
+	}
+
+	return client.New(ctx, address, opts)
+}
+
 func testRefReadFile(t *testing.T, sb integration.Sandbox) {
 	testutil.SetTestCode(t)
 
 	ctx := testutil.GetContext(t)
 
-	c, err := client.New(ctx, sb.Address())
+	c, err := newClient(ctx, sb.Address())
 	require.NoError(t, err)
 	defer c.Close()
 
@@ -108,7 +118,7 @@ func testRefReadDir(t *testing.T, sb integration.Sandbox) {
 	testutil.SetTestCode(t)
 	ctx := testutil.GetContext(t)
 
-	c, err := client.New(ctx, sb.Address())
+	c, err := newClient(ctx, sb.Address())
 	require.NoError(t, err)
 	defer c.Close()
 
@@ -225,7 +235,7 @@ func testRefStatFile(t *testing.T, sb integration.Sandbox) {
 	testutil.SetTestCode(t)
 	ctx := testutil.GetContext(t)
 
-	c, err := client.New(ctx, sb.Address())
+	c, err := newClient(ctx, sb.Address())
 	require.NoError(t, err)
 	defer c.Close()
 
