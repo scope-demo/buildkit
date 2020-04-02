@@ -3,18 +3,18 @@ package progress
 import (
 	"context"
 	"fmt"
+	"github.com/moby/buildkit/util/testutil"
 	"io"
 	"testing"
 	"time"
 
 	"github.com/stretchr/testify/assert"
-	"go.undefinedlabs.com/scopeagent"
 	"golang.org/x/sync/errgroup"
 )
 
 func TestProgress(t *testing.T) {
 	t.Parallel()
-	s, err := calc(scopeagent.GetContextFromTest(t), 4, "calc")
+	s, err := calc(testutil.GetContext(t), 4, "calc")
 	assert.NoError(t, err)
 	assert.Equal(t, 10, s)
 

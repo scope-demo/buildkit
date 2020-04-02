@@ -5,9 +5,9 @@ import (
 	"time"
 
 	"github.com/moby/buildkit/identity"
+	"github.com/moby/buildkit/util/testutil"
 	digest "github.com/opencontainers/go-digest"
 	"github.com/stretchr/testify/require"
-	"go.undefinedlabs.com/scopeagent"
 )
 
 func depKeys(cks ...ExportableCacheKey) []CacheKeyWithSelector {
@@ -38,7 +38,7 @@ func expKey(k *CacheKey) ExportableCacheKey {
 }
 
 func TestInMemoryCache(t *testing.T) {
-	ctx := scopeagent.GetContextFromTest(t)
+	ctx := testutil.GetContext(t)
 
 	m := NewInMemoryCacheManager()
 
@@ -151,7 +151,7 @@ func TestInMemoryCache(t *testing.T) {
 }
 
 func TestInMemoryCacheSelector(t *testing.T) {
-	ctx := scopeagent.GetContextFromTest(t)
+	ctx := testutil.GetContext(t)
 
 	m := NewInMemoryCacheManager()
 
@@ -185,7 +185,7 @@ func TestInMemoryCacheSelector(t *testing.T) {
 }
 
 func TestInMemoryCacheSelectorNested(t *testing.T) {
-	ctx := scopeagent.GetContextFromTest(t)
+	ctx := testutil.GetContext(t)
 
 	m := NewInMemoryCacheManager()
 

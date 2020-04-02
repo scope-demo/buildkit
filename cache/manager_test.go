@@ -24,12 +24,12 @@ import (
 	"github.com/moby/buildkit/snapshot"
 	containerdsnapshot "github.com/moby/buildkit/snapshot/containerd"
 	"github.com/moby/buildkit/util/leaseutil"
+	"github.com/moby/buildkit/util/testutil"
 	"github.com/opencontainers/go-digest"
 	ocispec "github.com/opencontainers/image-spec/specs-go/v1"
 	"github.com/pkg/errors"
 	"github.com/stretchr/testify/require"
 	bolt "go.etcd.io/bbolt"
-	"go.undefinedlabs.com/scopeagent"
 )
 
 type cmOpt struct {
@@ -349,7 +349,7 @@ func TestSnapshotExtract(t *testing.T) {
 
 	id := snap.ID()
 
-	err = snap.Release(scopeagent.GetContextFromTest(t))
+	err = snap.Release(testutil.GetContext(t))
 	require.NoError(t, err)
 
 	buf = pruneResultBuffer()
@@ -368,7 +368,7 @@ func TestSnapshotExtract(t *testing.T) {
 
 	checkDiskUsage(ctx, t, cm, 2, 0)
 
-	err = snap2.Release(scopeagent.GetContextFromTest(t))
+	err = snap2.Release(testutil.GetContext(t))
 	require.NoError(t, err)
 
 	checkDiskUsage(ctx, t, cm, 1, 1)
@@ -388,7 +388,7 @@ func TestSnapshotExtract(t *testing.T) {
 
 	checkNumBlobs(ctx, t, co.cs, 1)
 
-	err = snap.Release(scopeagent.GetContextFromTest(t))
+	err = snap.Release(testutil.GetContext(t))
 	require.NoError(t, err)
 
 	buf = pruneResultBuffer()
@@ -453,7 +453,7 @@ func TestExtractOnMutable(t *testing.T) {
 	snap2, err = cm.GetByBlob(ctx, desc2, snap)
 	require.NoError(t, err)
 
-	err = snap.Release(scopeagent.GetContextFromTest(t))
+	err = snap.Release(testutil.GetContext(t))
 	require.NoError(t, err)
 
 	require.Equal(t, false, snap2.Info().Extracted)
@@ -487,7 +487,7 @@ func TestExtractOnMutable(t *testing.T) {
 	require.NoError(t, err)
 	require.Equal(t, 2, len(dirs))
 
-	err = snap2.Release(scopeagent.GetContextFromTest(t))
+	err = snap2.Release(testutil.GetContext(t))
 	require.NoError(t, err)
 
 	checkDiskUsage(ctx, t, cm, 0, 2)
@@ -544,7 +544,7 @@ func TestSetBlob(t *testing.T) {
 
 	ctx, clean, err := leaseutil.WithLease(ctx, co.lm)
 	require.NoError(t, err)
-	defer clean(scopeagent.GetContextFromTest(t))
+	defer clean(testutil.GetContext(t))
 
 	b, desc, err := mapToBlob(map[string]string{"foo": "bar"})
 	require.NoError(t, err)
@@ -667,7 +667,7 @@ func TestSetBlob(t *testing.T) {
 	}, snap3)
 	require.Error(t, err)
 
-	clean(scopeagent.GetContextFromTest(t))
+	clean(testutil.GetContext(t))
 
 	//snap.SetBlob()
 }

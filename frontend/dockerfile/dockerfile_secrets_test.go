@@ -12,8 +12,8 @@ import (
 	"github.com/moby/buildkit/session"
 	"github.com/moby/buildkit/session/secrets/secretsprovider"
 	"github.com/moby/buildkit/util/testutil/integration"
+	"github.com/moby/buildkit/util/testutil"
 	"github.com/stretchr/testify/require"
-	"go.undefinedlabs.com/scopeagent"
 )
 
 var secretsTests = []integration.Test{
@@ -25,7 +25,7 @@ func init() {
 }
 
 func testSecretFileParams(t *testing.T, sb integration.Sandbox) {
-	scopeagent.SetTestCodeFromCaller(t)
+	testutil.SetTestCode(t)
 
 	f := getFrontend(t, sb)
 
@@ -40,11 +40,11 @@ RUN --mount=type=secret,required=false,mode=741,uid=100,gid=102,target=/mysecret
 	require.NoError(t, err)
 	defer os.RemoveAll(dir)
 
-	c, err := client.New(scopeagent.GetContextFromTest(t), sb.Address())
+	c, err := client.New(testutil.GetContext(t), sb.Address())
 	require.NoError(t, err)
 	defer c.Close()
 
-	_, err = f.Solve(scopeagent.GetContextFromTest(t), c, client.SolveOpt{
+	_, err = f.Solve(testutil.GetContext(t), c, client.SolveOpt{
 		LocalDirs: map[string]string{
 			builder.DefaultLocalNameDockerfile: dir,
 			builder.DefaultLocalNameContext:    dir,

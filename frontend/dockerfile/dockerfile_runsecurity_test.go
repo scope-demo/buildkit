@@ -11,8 +11,8 @@ import (
 	"github.com/moby/buildkit/frontend/dockerfile/builder"
 	"github.com/moby/buildkit/util/entitlements"
 	"github.com/moby/buildkit/util/testutil/integration"
+	"github.com/moby/buildkit/util/testutil"
 	"github.com/stretchr/testify/require"
-	"go.undefinedlabs.com/scopeagent"
 )
 
 var runSecurityTests = []integration.Test{
@@ -35,7 +35,7 @@ func init() {
 }
 
 func testInsecureDevicesWhitelist(t *testing.T, sb integration.Sandbox) {
-	scopeagent.SetTestCodeFromCaller(t)
+	testutil.SetTestCode(t)
 
 	if sb.Rootless() {
 		t.SkipNow()
@@ -67,11 +67,11 @@ RUN --security=insecure ls -l /dev && dd if=/dev/zero of=disk.img bs=20M count=1
 	require.NoError(t, err)
 	defer os.RemoveAll(dir)
 
-	c, err := client.New(scopeagent.GetContextFromTest(t), sb.Address())
+	c, err := client.New(testutil.GetContext(t), sb.Address())
 	require.NoError(t, err)
 	defer c.Close()
 
-	_, err = f.Solve(scopeagent.GetContextFromTest(t), c, client.SolveOpt{
+	_, err = f.Solve(testutil.GetContext(t), c, client.SolveOpt{
 		LocalDirs: map[string]string{
 			builder.DefaultLocalNameDockerfile: dir,
 			builder.DefaultLocalNameContext:    dir,
@@ -92,7 +92,7 @@ RUN --security=insecure ls -l /dev && dd if=/dev/zero of=disk.img bs=20M count=1
 }
 
 func testRunSecurityInsecure(t *testing.T, sb integration.Sandbox) {
-	scopeagent.SetTestCodeFromCaller(t)
+	testutil.SetTestCode(t)
 
 	f := getFrontend(t, sb)
 
@@ -108,11 +108,11 @@ RUN [ "$(cat /proc/self/status | grep CapBnd)" == "CapBnd:	00000000a80425fb" ]
 	require.NoError(t, err)
 	defer os.RemoveAll(dir)
 
-	c, err := client.New(scopeagent.GetContextFromTest(t), sb.Address())
+	c, err := client.New(testutil.GetContext(t), sb.Address())
 	require.NoError(t, err)
 	defer c.Close()
 
-	_, err = f.Solve(scopeagent.GetContextFromTest(t), c, client.SolveOpt{
+	_, err = f.Solve(testutil.GetContext(t), c, client.SolveOpt{
 		LocalDirs: map[string]string{
 			builder.DefaultLocalNameDockerfile: dir,
 			builder.DefaultLocalNameContext:    dir,
@@ -133,7 +133,7 @@ RUN [ "$(cat /proc/self/status | grep CapBnd)" == "CapBnd:	00000000a80425fb" ]
 }
 
 func testRunSecuritySandbox(t *testing.T, sb integration.Sandbox) {
-	scopeagent.SetTestCodeFromCaller(t)
+	testutil.SetTestCode(t)
 
 	f := getFrontend(t, sb)
 
@@ -148,11 +148,11 @@ RUN --security=sandbox [ "$(cat /proc/self/status | grep CapBnd)" == "CapBnd:	00
 	require.NoError(t, err)
 	defer os.RemoveAll(dir)
 
-	c, err := client.New(scopeagent.GetContextFromTest(t), sb.Address())
+	c, err := client.New(testutil.GetContext(t), sb.Address())
 	require.NoError(t, err)
 	defer c.Close()
 
-	_, err = f.Solve(scopeagent.GetContextFromTest(t), c, client.SolveOpt{
+	_, err = f.Solve(testutil.GetContext(t), c, client.SolveOpt{
 		LocalDirs: map[string]string{
 			builder.DefaultLocalNameDockerfile: dir,
 			builder.DefaultLocalNameContext:    dir,
@@ -163,7 +163,7 @@ RUN --security=sandbox [ "$(cat /proc/self/status | grep CapBnd)" == "CapBnd:	00
 }
 
 func testRunSecurityDefault(t *testing.T, sb integration.Sandbox) {
-	scopeagent.SetTestCodeFromCaller(t)
+	testutil.SetTestCode(t)
 
 	f := getFrontend(t, sb)
 
@@ -178,11 +178,11 @@ RUN [ "$(cat /proc/self/status | grep CapBnd)" == "CapBnd:	00000000a80425fb" ]
 	require.NoError(t, err)
 	defer os.RemoveAll(dir)
 
-	c, err := client.New(scopeagent.GetContextFromTest(t), sb.Address())
+	c, err := client.New(testutil.GetContext(t), sb.Address())
 	require.NoError(t, err)
 	defer c.Close()
 
-	_, err = f.Solve(scopeagent.GetContextFromTest(t), c, client.SolveOpt{
+	_, err = f.Solve(testutil.GetContext(t), c, client.SolveOpt{
 		LocalDirs: map[string]string{
 			builder.DefaultLocalNameDockerfile: dir,
 			builder.DefaultLocalNameContext:    dir,

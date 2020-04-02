@@ -20,11 +20,11 @@ import (
 
 	"github.com/containerd/containerd/content"
 	"github.com/moby/buildkit/util/contentutil"
+	"github.com/moby/buildkit/util/testutil"
 	ocispec "github.com/opencontainers/image-spec/specs-go/v1"
 	"github.com/pkg/errors"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
-	"go.undefinedlabs.com/scopeagent"
 )
 
 // Backend is the minimal interface that describes a testing backend.
@@ -145,8 +145,8 @@ func Run(t *testing.T, testCases []Test, opt ...TestOpt) {
 				fn := getFunctionName(tc)
 				name := fn + "/worker=" + br.Name() + mv.functionSuffix()
 				func(fn, testName string, br Worker, tc Test, mv matrixValue) {
-					ok := scopeagent.GetTest(t).Run(testName, func(t *testing.T) {
-						testCtx := scopeagent.GetContextFromTest(t)
+					ok := testutil.GetTracedTest(t).Run(testName, func(t *testing.T) {
+						testCtx := testutil.GetContext(t)
 
 						defer cleanOnComplete()()
 						if !strings.HasSuffix(fn, "NoParallel") {

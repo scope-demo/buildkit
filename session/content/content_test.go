@@ -8,17 +8,17 @@ import (
 	"github.com/containerd/containerd/content"
 	"github.com/containerd/containerd/content/local"
 	"github.com/moby/buildkit/session"
-	"github.com/moby/buildkit/session/testutil"
+	sessionutil "github.com/moby/buildkit/session/testutil"
+	"github.com/moby/buildkit/util/testutil"
 	digest "github.com/opencontainers/go-digest"
 	ocispec "github.com/opencontainers/image-spec/specs-go/v1"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
-	"go.undefinedlabs.com/scopeagent"
 	"golang.org/x/sync/errgroup"
 )
 
 func TestContentAttachable(t *testing.T) {
-	ctx := scopeagent.GetContextFromTest(t)
+	ctx := testutil.GetContext(t)
 	t.Parallel()
 	ids := []string{"store-id-0", "store-id-1"}
 	attachableStores := make(map[string]content.Store)
@@ -54,7 +54,7 @@ func TestContentAttachable(t *testing.T) {
 	a := NewAttachable(attachableStores)
 	s.Allow(a)
 
-	dialer := session.Dialer(testutil.TestStream(testutil.Handler(m.HandleConn)))
+	dialer := session.Dialer(sessionutil.TestStream(sessionutil.Handler(m.HandleConn)))
 
 	g, ctx := errgroup.WithContext(ctx)
 

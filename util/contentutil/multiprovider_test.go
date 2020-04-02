@@ -6,16 +6,16 @@ import (
 
 	"github.com/containerd/containerd/content"
 	"github.com/containerd/containerd/errdefs"
+	"github.com/moby/buildkit/util/testutil"
 	digest "github.com/opencontainers/go-digest"
 	ocispec "github.com/opencontainers/image-spec/specs-go/v1"
 	"github.com/pkg/errors"
 	"github.com/stretchr/testify/require"
-	"go.undefinedlabs.com/scopeagent"
 )
 
 func TestMultiProvider(t *testing.T) {
 	t.Parallel()
-	ctx := scopeagent.GetContextFromTest(t)
+	ctx := testutil.GetContext(t)
 
 	b0 := NewBuffer()
 	b1 := NewBuffer()

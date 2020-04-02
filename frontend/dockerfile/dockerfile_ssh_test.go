@@ -18,8 +18,8 @@ import (
 	"github.com/moby/buildkit/session"
 	"github.com/moby/buildkit/session/sshforward/sshprovider"
 	"github.com/moby/buildkit/util/testutil/integration"
+	"github.com/moby/buildkit/util/testutil"
 	"github.com/stretchr/testify/require"
-	"go.undefinedlabs.com/scopeagent"
 )
 
 var sshTests = []integration.Test{
@@ -31,7 +31,7 @@ func init() {
 }
 
 func testSSHSocketParams(t *testing.T, sb integration.Sandbox) {
-	scopeagent.SetTestCodeFromCaller(t)
+	testutil.SetTestCode(t)
 
 	f := getFrontend(t, sb)
 
@@ -46,7 +46,7 @@ RUN --mount=type=ssh,mode=741,uid=100,gid=102 [ "$(stat -c "%u %g %f" $SSH_AUTH_
 	require.NoError(t, err)
 	defer os.RemoveAll(dir)
 
-	c, err := client.New(scopeagent.GetContextFromTest(t), sb.Address())
+	c, err := client.New(testutil.GetContext(t), sb.Address())
 	require.NoError(t, err)
 	defer c.Close()
 
@@ -72,7 +72,7 @@ RUN --mount=type=ssh,mode=741,uid=100,gid=102 [ "$(stat -c "%u %g %f" $SSH_AUTH_
 	}})
 	require.NoError(t, err)
 
-	_, err = f.Solve(scopeagent.GetContextFromTest(t), c, client.SolveOpt{
+	_, err = f.Solve(testutil.GetContext(t), c, client.SolveOpt{
 		LocalDirs: map[string]string{
 			builder.DefaultLocalNameDockerfile: dir,
 			builder.DefaultLocalNameContext:    dir,

@@ -2,6 +2,7 @@ package git
 
 import (
 	"context"
+	"github.com/moby/buildkit/util/testutil"
 	"io/ioutil"
 	"os"
 	"os/exec"
@@ -24,7 +25,6 @@ import (
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
 	bolt "go.etcd.io/bbolt"
-	"go.undefinedlabs.com/scopeagent"
 )
 
 func TestRepeatedFetch(t *testing.T) {
@@ -36,7 +36,7 @@ func TestRepeatedFetchKeepGitDir(t *testing.T) {
 
 func testRepeatedFetch(t *testing.T, keepGitDir bool) {
 	t.Parallel()
-	ctx := scopeagent.GetContextFromTest(t)
+	ctx := testutil.GetContext(t)
 
 	tmpdir, err := ioutil.TempDir("", "buildkit-state")
 	require.NoError(t, err)
@@ -69,7 +69,7 @@ func testRepeatedFetch(t *testing.T, keepGitDir bool) {
 
 	ref1, err := g.Snapshot(ctx)
 	require.NoError(t, err)
-	defer ref1.Release(scopeagent.GetContextFromTest(t))
+	defer ref1.Release(testutil.GetContext(t))
 
 	mount, err := ref1.Mount(ctx, false)
 	require.NoError(t, err)
@@ -105,7 +105,7 @@ func testRepeatedFetch(t *testing.T, keepGitDir bool) {
 
 	ref2, err := g.Snapshot(ctx)
 	require.NoError(t, err)
-	defer ref2.Release(scopeagent.GetContextFromTest(t))
+	defer ref2.Release(testutil.GetContext(t))
 
 	require.Equal(t, ref1.ID(), ref2.ID())
 
@@ -120,7 +120,7 @@ func testRepeatedFetch(t *testing.T, keepGitDir bool) {
 
 	ref3, err := g.Snapshot(ctx)
 	require.NoError(t, err)
-	defer ref3.Release(scopeagent.GetContextFromTest(t))
+	defer ref3.Release(testutil.GetContext(t))
 
 	mount, err = ref3.Mount(ctx, false)
 	require.NoError(t, err)
@@ -192,7 +192,7 @@ func testFetchBySHA(t *testing.T, keepGitDir bool) {
 
 	ref1, err := g.Snapshot(ctx)
 	require.NoError(t, err)
-	defer ref1.Release(scopeagent.GetContextFromTest(t))
+	defer ref1.Release(testutil.GetContext(t))
 
 	mount, err := ref1.Mount(ctx, false)
 	require.NoError(t, err)
@@ -278,7 +278,7 @@ func testMultipleRepos(t *testing.T, keepGitDir bool) {
 
 	ref1, err := g.Snapshot(ctx)
 	require.NoError(t, err)
-	defer ref1.Release(scopeagent.GetContextFromTest(t))
+	defer ref1.Release(testutil.GetContext(t))
 
 	mount, err := ref1.Mount(ctx, false)
 	require.NoError(t, err)
@@ -290,7 +290,7 @@ func testMultipleRepos(t *testing.T, keepGitDir bool) {
 
 	ref2, err := g2.Snapshot(ctx)
 	require.NoError(t, err)
-	defer ref2.Release(scopeagent.GetContextFromTest(t))
+	defer ref2.Release(testutil.GetContext(t))
 
 	mount, err = ref2.Mount(ctx, false)
 	require.NoError(t, err)

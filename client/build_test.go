@@ -2,6 +2,7 @@ package client
 
 import (
 	"context"
+	"github.com/moby/buildkit/util/testutil"
 	"io/ioutil"
 	"os"
 	"path/filepath"
@@ -14,7 +15,6 @@ import (
 	"github.com/moby/buildkit/util/testutil/integration"
 	"github.com/pkg/errors"
 	"github.com/stretchr/testify/require"
-	"go.undefinedlabs.com/scopeagent"
 )
 
 func TestClientGatewayIntegration(t *testing.T) {
@@ -30,7 +30,7 @@ func TestClientGatewayIntegration(t *testing.T) {
 func testClientGatewaySolve(t *testing.T, sb integration.Sandbox) {
 	requiresLinux(t)
 
-	ctx := scopeagent.GetContextFromTest(t)
+	ctx := testutil.GetContext(t)
 
 	c, err := New(ctx, sb.Address())
 	require.NoError(t, err)
@@ -108,7 +108,7 @@ func testClientGatewaySolve(t *testing.T, sb integration.Sandbox) {
 func testClientGatewayFailedSolve(t *testing.T, sb integration.Sandbox) {
 	requiresLinux(t)
 
-	ctx := scopeagent.GetContextFromTest(t)
+	ctx := testutil.GetContext(t)
 
 	c, err := New(ctx, sb.Address())
 	require.NoError(t, err)
@@ -126,7 +126,7 @@ func testClientGatewayFailedSolve(t *testing.T, sb integration.Sandbox) {
 func testClientGatewayEmptySolve(t *testing.T, sb integration.Sandbox) {
 	requiresLinux(t)
 
-	ctx := scopeagent.GetContextFromTest(t)
+	ctx := testutil.GetContext(t)
 
 	c, err := New(ctx, sb.Address())
 	require.NoError(t, err)
@@ -150,7 +150,7 @@ func testClientGatewayEmptySolve(t *testing.T, sb integration.Sandbox) {
 func testNoBuildID(t *testing.T, sb integration.Sandbox) {
 	requiresLinux(t)
 
-	ctx := scopeagent.GetContextFromTest(t)
+	ctx := testutil.GetContext(t)
 
 	c, err := New(ctx, sb.Address())
 	require.NoError(t, err)
@@ -165,7 +165,7 @@ func testNoBuildID(t *testing.T, sb integration.Sandbox) {
 func testUnknownBuildID(t *testing.T, sb integration.Sandbox) {
 	requiresLinux(t)
 
-	ctx := scopeagent.GetContextFromTest(t)
+	ctx := testutil.GetContext(t)
 
 	c, err := New(ctx, sb.Address())
 	require.NoError(t, err)

@@ -295,7 +295,7 @@ go.opencensus.io/internal
 go.opencensus.io/trace
 go.opencensus.io/trace/internal
 go.opencensus.io/trace/tracestate
-# go.undefinedlabs.com/scopeagent v0.1.16-0.20200401134723-03f0db1079b2
+# go.undefinedlabs.com/scopeagent v0.1.16-0.20200402074244-a5dc5c4b49b2
 go.undefinedlabs.com/scopeagent
 go.undefinedlabs.com/scopeagent/agent
 go.undefinedlabs.com/scopeagent/ast

@@ -12,12 +12,12 @@ import (
 	"time"
 
 	"github.com/moby/buildkit/identity"
+	"github.com/moby/buildkit/util/testutil"
 	digest "github.com/opencontainers/go-digest"
 	ocispec "github.com/opencontainers/image-spec/specs-go/v1"
 	"github.com/pkg/errors"
 	"github.com/sirupsen/logrus"
 	"github.com/stretchr/testify/require"
-	"go.undefinedlabs.com/scopeagent"
 	"golang.org/x/sync/errgroup"
 )
 
@@ -30,7 +30,7 @@ func init() {
 
 func TestSingleLevelActiveGraph(t *testing.T) {
 	t.Parallel()
-	ctx := scopeagent.GetContextFromTest(t)
+	ctx := testutil.GetContext(t)
 
 	s := NewSolver(SolverOpt{
 		ResolveOpFunc: testOpResolver,
@@ -209,7 +209,7 @@ func TestSingleLevelActiveGraph(t *testing.T) {
 
 func TestSingleLevelCache(t *testing.T) {
 	t.Parallel()
-	ctx := scopeagent.GetContextFromTest(t)
+	ctx := testutil.GetContext(t)
 
 	s := NewSolver(SolverOpt{
 		ResolveOpFunc: testOpResolver,
@@ -306,7 +306,7 @@ func TestSingleLevelCache(t *testing.T) {
 
 func TestSingleLevelCacheParallel(t *testing.T) {
 	t.Parallel()
-	ctx := scopeagent.GetContextFromTest(t)
+	ctx := testutil.GetContext(t)
 
 	s := NewSolver(SolverOpt{
 		ResolveOpFunc: testOpResolver,
@@ -382,7 +382,7 @@ func TestSingleLevelCacheParallel(t *testing.T) {
 
 func TestMultiLevelCacheParallel(t *testing.T) {
 	t.Parallel()
-	ctx := scopeagent.GetContextFromTest(t)
+	ctx := testutil.GetContext(t)
 
 	s := NewSolver(SolverOpt{
 		ResolveOpFunc: testOpResolver,
@@ -473,7 +473,7 @@ func TestMultiLevelCacheParallel(t *testing.T) {
 
 func TestSingleCancelCache(t *testing.T) {
 	t.Parallel()
-	ctx := scopeagent.GetContextFromTest(t)
+	ctx := testutil.GetContext(t)
 
 	s := NewSolver(SolverOpt{
 		ResolveOpFunc: testOpResolver,
@@ -516,7 +516,7 @@ func TestSingleCancelCache(t *testing.T) {
 }
 func TestSingleCancelExec(t *testing.T) {
 	t.Parallel()
-	ctx := scopeagent.GetContextFromTest(t)
+	ctx := testutil.GetContext(t)
 
 	s := NewSolver(SolverOpt{
 		ResolveOpFunc: testOpResolver,
@@ -559,7 +559,7 @@ func TestSingleCancelExec(t *testing.T) {
 
 func TestSingleCancelParallel(t *testing.T) {
 	t.Parallel()
-	ctx := scopeagent.GetContextFromTest(t)
+	ctx := testutil.GetContext(t)
 
 	s := NewSolver(SolverOpt{
 		ResolveOpFunc: testOpResolver,
@@ -634,7 +634,7 @@ func TestSingleCancelParallel(t *testing.T) {
 
 func TestMultiLevelCalculation(t *testing.T) {
 	t.Parallel()
-	ctx := scopeagent.GetContextFromTest(t)
+	ctx := testutil.GetContext(t)
 
 	l := NewSolver(SolverOpt{
 		ResolveOpFunc: testOpResolver,
@@ -718,7 +718,7 @@ func TestMultiLevelCalculation(t *testing.T) {
 
 func TestHugeGraph(t *testing.T) {
 	t.Parallel()
-	ctx := scopeagent.GetContextFromTest(t)
+	ctx := testutil.GetContext(t)
 
 	rand.Seed(time.Now().UnixNano())
 
@@ -780,7 +780,7 @@ func TestHugeGraph(t *testing.T) {
 // they are really needed
 func TestOptimizedCacheAccess(t *testing.T) {
 	t.Parallel()
-	ctx := scopeagent.GetContextFromTest(t)
+	ctx := testutil.GetContext(t)
 
 	cacheManager := newTrackingCacheManager(NewInMemoryCacheManager())
 
@@ -887,7 +887,7 @@ func TestOptimizedCacheAccess(t *testing.T) {
 // inputs that didn't.
 func TestOptimizedCacheAccess2(t *testing.T) {
 	t.Parallel()
-	ctx := scopeagent.GetContextFromTest(t)
+	ctx := testutil.GetContext(t)
 
 	cacheManager := newTrackingCacheManager(NewInMemoryCacheManager())
 
@@ -1038,7 +1038,7 @@ func TestOptimizedCacheAccess2(t *testing.T) {
 
 func TestSlowCache(t *testing.T) {
 	t.Parallel()
-	ctx := scopeagent.GetContextFromTest(t)
+	ctx := testutil.GetContext(t)
 
 	rand.Seed(time.Now().UnixNano())
 
@@ -1120,7 +1120,7 @@ func TestSlowCache(t *testing.T) {
 // TestParallelInputs validates that inputs are processed in parallel
 func TestParallelInputs(t *testing.T) {
 	t.Parallel()
-	ctx := scopeagent.GetContextFromTest(t)
+	ctx := testutil.GetContext(t)
 
 	rand.Seed(time.Now().UnixNano())
 
@@ -1179,7 +1179,7 @@ func TestParallelInputs(t *testing.T) {
 
 func TestErrorReturns(t *testing.T) {
 	t.Parallel()
-	ctx := scopeagent.GetContextFromTest(t)
+	ctx := testutil.GetContext(t)
 
 	rand.Seed(time.Now().UnixNano())
 
@@ -1313,7 +1313,7 @@ func TestErrorReturns(t *testing.T) {
 
 func TestMultipleCacheSources(t *testing.T) {
 	t.Parallel()
-	ctx := scopeagent.GetContextFromTest(t)
+	ctx := testutil.GetContext(t)
 
 	cacheManager := newTrackingCacheManager(NewInMemoryCacheManager())
 
@@ -1429,7 +1429,7 @@ func TestMultipleCacheSources(t *testing.T) {
 
 func TestRepeatBuildWithIgnoreCache(t *testing.T) {
 	t.Parallel()
-	ctx := scopeagent.GetContextFromTest(t)
+	ctx := testutil.GetContext(t)
 
 	l := NewSolver(SolverOpt{
 		ResolveOpFunc: testOpResolver,
@@ -1550,7 +1550,7 @@ func TestRepeatBuildWithIgnoreCache(t *testing.T) {
 // with ignore-cache generates same slow cache key
 func TestIgnoreCacheResumeFromSlowCache(t *testing.T) {
 	t.Parallel()
-	ctx := scopeagent.GetContextFromTest(t)
+	ctx := testutil.GetContext(t)
 
 	l := NewSolver(SolverOpt{
 		ResolveOpFunc: testOpResolver,
@@ -1637,7 +1637,7 @@ func TestIgnoreCacheResumeFromSlowCache(t *testing.T) {
 
 func TestParallelBuildsIgnoreCache(t *testing.T) {
 	t.Parallel()
-	ctx := scopeagent.GetContextFromTest(t)
+	ctx := testutil.GetContext(t)
 
 	l := NewSolver(SolverOpt{
 		ResolveOpFunc: testOpResolver,
@@ -1800,7 +1800,7 @@ func TestParallelBuildsIgnoreCache(t *testing.T) {
 
 func TestSubbuild(t *testing.T) {
 	t.Parallel()
-	ctx := scopeagent.GetContextFromTest(t)
+	ctx := testutil.GetContext(t)
 
 	l := NewSolver(SolverOpt{
 		ResolveOpFunc: testOpResolver,
@@ -1862,7 +1862,7 @@ func TestSubbuild(t *testing.T) {
 
 func TestCacheWithSelector(t *testing.T) {
 	t.Parallel()
-	ctx := scopeagent.GetContextFromTest(t)
+	ctx := testutil.GetContext(t)
 
 	cacheManager := newTrackingCacheManager(NewInMemoryCacheManager())
 
@@ -1996,7 +1996,7 @@ func TestCacheWithSelector(t *testing.T) {
 
 func TestCacheSlowWithSelector(t *testing.T) {
 	t.Parallel()
-	ctx := scopeagent.GetContextFromTest(t)
+	ctx := testutil.GetContext(t)
 
 	cacheManager := newTrackingCacheManager(NewInMemoryCacheManager())
 
@@ -2095,7 +2095,7 @@ func TestCacheSlowWithSelector(t *testing.T) {
 
 func TestCacheExporting(t *testing.T) {
 	t.Parallel()
-	ctx := scopeagent.GetContextFromTest(t)
+	ctx := testutil.GetContext(t)
 
 	cacheManager := newTrackingCacheManager(NewInMemoryCacheManager())
 
@@ -2179,7 +2179,7 @@ func TestCacheExporting(t *testing.T) {
 
 func TestCacheExportingModeMin(t *testing.T) {
 	t.Parallel()
-	ctx := scopeagent.GetContextFromTest(t)
+	ctx := testutil.GetContext(t)
 
 	cacheManager := newTrackingCacheManager(NewInMemoryCacheManager())
 
@@ -2305,7 +2305,7 @@ func TestCacheExportingModeMin(t *testing.T) {
 
 func TestSlowCacheAvoidAccess(t *testing.T) {
 	t.Parallel()
-	ctx := scopeagent.GetContextFromTest(t)
+	ctx := testutil.GetContext(t)
 
 	cacheManager := newTrackingCacheManager(NewInMemoryCacheManager())
 
@@ -2397,7 +2397,7 @@ func TestSlowCacheAvoidAccess(t *testing.T) {
 // moby/buildkit#648
 func TestSlowCacheAvoidLoadOnCache(t *testing.T) {
 	t.Parallel()
-	ctx := scopeagent.GetContextFromTest(t)
+	ctx := testutil.GetContext(t)
 
 	cacheManager := newTrackingCacheManager(NewInMemoryCacheManager())
 
@@ -2548,7 +2548,7 @@ func TestSlowCacheAvoidLoadOnCache(t *testing.T) {
 
 func TestCacheMultipleMaps(t *testing.T) {
 	t.Parallel()
-	ctx := scopeagent.GetContextFromTest(t)
+	ctx := testutil.GetContext(t)
 
 	cacheManager := newTrackingCacheManager(NewInMemoryCacheManager())
 
@@ -2667,7 +2667,7 @@ func TestCacheMultipleMaps(t *testing.T) {
 
 func TestCacheInputMultipleMaps(t *testing.T) {
 	t.Parallel()
-	ctx := scopeagent.GetContextFromTest(t)
+	ctx := testutil.GetContext(t)
 
 	cacheManager := newTrackingCacheManager(NewInMemoryCacheManager())
 
@@ -2760,7 +2760,7 @@ func TestCacheInputMultipleMaps(t *testing.T) {
 
 func TestCacheExportingPartialSelector(t *testing.T) {
 	t.Parallel()
-	ctx := scopeagent.GetContextFromTest(t)
+	ctx := testutil.GetContext(t)
 
 	cacheManager := newTrackingCacheManager(NewInMemoryCacheManager())
 
@@ -2964,7 +2964,7 @@ func TestCacheExportingPartialSelector(t *testing.T) {
 
 func TestCacheExportingMergedKey(t *testing.T) {
 	t.Parallel()
-	ctx := scopeagent.GetContextFromTest(t)
+	ctx := testutil.GetContext(t)
 
 	cacheManager := newTrackingCacheManager(NewInMemoryCacheManager())
 
@@ -3057,7 +3057,7 @@ func TestMergedEdgesLookup(t *testing.T) {
 	// this test requires multiple runs to trigger the race
 	for i := 0; i < 20; i++ {
 		func() {
-			ctx := scopeagent.GetContextFromTest(t)
+			ctx := testutil.GetContext(t)
 
 			cacheManager := newTrackingCacheManager(NewInMemoryCacheManager())
 
@@ -3105,7 +3105,7 @@ func TestMergedEdgesLookup(t *testing.T) {
 
 func TestInputRequestDeadlock(t *testing.T) {
 	t.Parallel()
-	ctx := scopeagent.GetContextFromTest(t)
+	ctx := testutil.GetContext(t)
 
 	s := NewSolver(SolverOpt{
 		ResolveOpFunc: testOpResolver,

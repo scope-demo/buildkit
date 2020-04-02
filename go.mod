@@ -67,7 +67,7 @@ require (
 	github.com/vishvananda/netns v0.0.0-20180720170159-13995c7128cc // indirect
 	go.etcd.io/bbolt v1.3.3
 	go.opencensus.io v0.22.3 // indirect
-	go.undefinedlabs.com/scopeagent v0.1.16-0.20200401134723-03f0db1079b2
+	go.undefinedlabs.com/scopeagent v0.1.16-0.20200402074244-a5dc5c4b49b2
 	golang.org/x/crypto v0.0.0-20200323165209-0ec3e9974c59
 	golang.org/x/net v0.0.0-20200324143707-d3edc9973b7e
 	golang.org/x/sync v0.0.0-20200317015054-43a5402ce75a

@@ -14,8 +14,8 @@ import (
 	"github.com/moby/buildkit/util/entitlements"
 	"github.com/moby/buildkit/util/testutil/echoserver"
 	"github.com/moby/buildkit/util/testutil/integration"
+	"github.com/moby/buildkit/util/testutil"
 	"github.com/stretchr/testify/require"
-	"go.undefinedlabs.com/scopeagent"
 )
 
 var runNetworkTests = []integration.Test{
@@ -30,7 +30,7 @@ func init() {
 }
 
 func testRunDefaultNetwork(t *testing.T, sb integration.Sandbox) {
-	scopeagent.SetTestCodeFromCaller(t)
+	testutil.SetTestCode(t)
 
 	if os.Getenv("BUILDKIT_RUN_NETWORK_INTEGRATION_TESTS") == "" {
 		t.SkipNow()
@@ -52,11 +52,11 @@ RUN ip link show eth0
 	require.NoError(t, err)
 	defer os.RemoveAll(dir)
 
-	c, err := client.New(scopeagent.GetContextFromTest(t), sb.Address())
+	c, err := client.New(testutil.GetContext(t), sb.Address())
 	require.NoError(t, err)
 	defer c.Close()
 
-	_, err = f.Solve(scopeagent.GetContextFromTest(t), c, client.SolveOpt{
+	_, err = f.Solve(testutil.GetContext(t), c, client.SolveOpt{
 		LocalDirs: map[string]string{
 			builder.DefaultLocalNameDockerfile: dir,
 			builder.DefaultLocalNameContext:    dir,
@@ -67,7 +67,7 @@ RUN ip link show eth0
 }
 
 func testRunNoNetwork(t *testing.T, sb integration.Sandbox) {
-	scopeagent.SetTestCodeFromCaller(t)
+	testutil.SetTestCode(t)
 
 	if os.Getenv("BUILDKIT_RUN_NETWORK_INTEGRATION_TESTS") == "" {
 		t.SkipNow()
@@ -90,11 +90,11 @@ RUN --network=none ! ip link show eth0
 	require.NoError(t, err)
 	defer os.RemoveAll(dir)
 
-	c, err := client.New(scopeagent.GetContextFromTest(t), sb.Address())
+	c, err := client.New(testutil.GetContext(t), sb.Address())
 	require.NoError(t, err)
 	defer c.Close()
 
-	_, err = f.Solve(scopeagent.GetContextFromTest(t), c, client.SolveOpt{
+	_, err = f.Solve(testutil.GetContext(t), c, client.SolveOpt{
 		LocalDirs: map[string]string{
 			builder.DefaultLocalNameDockerfile: dir,
 			builder.DefaultLocalNameContext:    dir,
@@ -105,7 +105,7 @@ RUN --network=none ! ip link show eth0
 }
 
 func testRunHostNetwork(t *testing.T, sb integration.Sandbox) {
-	scopeagent.SetTestCodeFromCaller(t)
+	testutil.SetTestCode(t)
 
 	if os.Getenv("BUILDKIT_RUN_NETWORK_INTEGRATION_TESTS") == "" {
 		t.SkipNow()
@@ -133,11 +133,11 @@ RUN --network=host nc 127.0.0.1 %s | grep foo
 	require.NoError(t, err)
 	defer os.RemoveAll(dir)
 
-	c, err := client.New(scopeagent.GetContextFromTest(t), sb.Address())
+	c, err := client.New(testutil.GetContext(t), sb.Address())
 	require.NoError(t, err)
 	defer c.Close()
 
-	_, err = f.Solve(scopeagent.GetContextFromTest(t), c, client.SolveOpt{
+	_, err = f.Solve(testutil.GetContext(t), c, client.SolveOpt{
 		LocalDirs: map[string]string{
 			builder.DefaultLocalNameDockerfile: dir,
 			builder.DefaultLocalNameContext:    dir,
@@ -158,7 +158,7 @@ RUN --network=host nc 127.0.0.1 %s | grep foo
 }
 
 func testRunGlobalNetwork(t *testing.T, sb integration.Sandbox) {
-	scopeagent.SetTestCodeFromCaller(t)
+	testutil.SetTestCode(t)
 
 	f := getFrontend(t, sb)
 
@@ -179,11 +179,11 @@ RUN --network=none ! nc -z 127.0.0.1 %s
 	require.NoError(t, err)
 	defer os.RemoveAll(dir)
 
-	c, err := client.New(scopeagent.GetContextFromTest(t), sb.Address())
+	c, err := client.New(testutil.GetContext(t), sb.Address())
 	require.NoError(t, err)
 	defer c.Close()
 
-	_, err = f.Solve(scopeagent.GetContextFromTest(t), c, client.SolveOpt{
+	_, err = f.Solve(testutil.GetContext(t), c, client.SolveOpt{
 		LocalDirs: map[string]string{
 			builder.DefaultLocalNameDockerfile: dir,
 			builder.DefaultLocalNameContext:    dir,
