@@ -14,6 +14,7 @@ import (
 	"github.com/urfave/cli"
 	"go.undefinedlabs.com/scopeagent/env"
 	"go.undefinedlabs.com/scopeagent/instrumentation"
+	scopeprocess "go.undefinedlabs.com/scopeagent/instrumentation/process"
 )
 
 func getTracer() (opentracing.Tracer, io.Closer) {
@@ -56,11 +57,15 @@ func AttachAppContext(app *cli.App) {
 					}
 				}
 
-				parent := opentracing.SpanFromContext(ctx)
 				var opts []opentracing.StartSpanOption
-				if parent != nil {
-					tracer = parent.Tracer()
-					opts = append(opts, opentracing.ChildOf(parent.Context()))
+				if scopeContext := scopeprocess.SpanContext(); scopeContext != nil {
+					opts = append(opts, opentracing.ChildOf(scopeContext))
+				} else {
+					parent := opentracing.SpanFromContext(ctx)
+					if parent != nil {
+						tracer = parent.Tracer()
+						opts = append(opts, opentracing.ChildOf(parent.Context()))
+					}
 				}
 
 				span = tracer.StartSpan(name, opts...)

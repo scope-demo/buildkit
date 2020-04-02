@@ -5,7 +5,6 @@ import (
 	"bytes"
 	"context"
 	"fmt"
-	"go.undefinedlabs.com/scopeagent/env"
 	"io/ioutil"
 	"os"
 	"os/exec"
@@ -19,6 +18,7 @@ import (
 	"github.com/google/shlex"
 	"github.com/pkg/errors"
 	"github.com/sirupsen/logrus"
+	"go.undefinedlabs.com/scopeagent/env"
 	"go.undefinedlabs.com/scopeagent/instrumentation/process"
 )
 
@@ -39,6 +39,7 @@ func (b backend) Rootless() bool {
 
 type sandbox struct {
 	Backend
+	TestCtx context.Context
 
 	logs    map[string]*bytes.Buffer
 	cleanup *multiCloser
@@ -66,7 +67,14 @@ func (sb *sandbox) Cmd(args ...string) *exec.Cmd {
 	}
 	cmd := exec.Command("buildctl", args...)
 	cmd.Env = append(cmd.Env, os.Environ()...)
-	cmd.Env = append(cmd.Env, "BUILDKIT_HOST="+sb.Address())
+	cmd.Env = append(cmd.Env, "SCOPE_SERVICE=buildctl_sandbox", "BUILDKIT_HOST="+sb.Address())
+
+	if env.ScopeDsn.Value != "" {
+		if sb.TestCtx != nil {
+			process.InjectToCmd(sb.TestCtx, cmd)
+		}
+	}
+
 	return cmd
 }
 
@@ -120,6 +128,7 @@ func newSandbox(testCtx context.Context, w Worker, mirror string, mv matrixValue
 
 	return &sandbox{
 		Backend: b,
+		TestCtx: testCtx,
 		logs:    cfg.Logs,
 		cleanup: deferF,
 		mv:      mv,
