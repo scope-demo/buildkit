@@ -14,7 +14,7 @@ func GetContext(t *testing.T) context.Context {
 
 // This method needs to be called inside of the subtest code.
 func SetTestCode(t *testing.T) {
-	scopeagent.SetTestCodeFromCallerSkip(t, 2)
+	scopeagent.SetTestCodeFromCallerSkip(t, 1)
 }
 
 func GetTracedTest(t *testing.T) *scopetesting.Test {
