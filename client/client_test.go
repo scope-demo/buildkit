@@ -173,7 +173,7 @@ func testCacheExportCacheKeyLoop(t *testing.T, sb integration.Sandbox) {
 				intermed := llb.Image("alpine:latest").File(llb.Copy(buildbase, "foo", "foo"))
 				final := llb.Scratch().File(llb.Copy(intermed, "foo", "foooooo"))
 
-				def, err := final.Marshal(context.TODO())
+				def, err := final.Marshal(testutil.GetContext(t))
 				require.NoError(t, err)
 
 				_, err = c.Solve(testutil.GetContext(t), def, SolveOpt{
@@ -212,7 +212,7 @@ func testBridgeNetworking(t *testing.T, sb integration.Sandbox) {
 	require.NoError(t, err)
 	addrParts := strings.Split(s.Addr().String(), ":")
 
-	def, err := llb.Image("busybox").Run(llb.Shlexf("sh -c 'nc 127.0.0.1 %s | grep foo'", addrParts[len(addrParts)-1])).Marshal(context.TODO())
+	def, err := llb.Image("busybox").Run(llb.Shlexf("sh -c 'nc 127.0.0.1 %s | grep foo'", addrParts[len(addrParts)-1])).Marshal(testutil.GetContext(t))
 	require.NoError(t, err)
 
 	_, err = c.Solve(testutil.GetContext(t), def, SolveOpt{}, nil)
@@ -237,7 +237,7 @@ func testHostNetworking(t *testing.T, sb integration.Sandbox) {
 	require.NoError(t, err)
 	addrParts := strings.Split(s.Addr().String(), ":")
 
-	def, err := llb.Image("busybox").Run(llb.Shlexf("sh -c 'nc 127.0.0.1 %s | grep foo'", addrParts[len(addrParts)-1]), llb.Network(llb.NetModeHost)).Marshal(context.TODO())
+	def, err := llb.Image("busybox").Run(llb.Shlexf("sh -c 'nc 127.0.0.1 %s | grep foo'", addrParts[len(addrParts)-1]), llb.Network(llb.NetModeHost)).Marshal(testutil.GetContext(t))
 	require.NoError(t, err)
 
 	_, err = c.Solve(testutil.GetContext(t), def, SolveOpt{
@@ -258,7 +258,7 @@ func testExportBusyboxLocal(t *testing.T, sb integration.Sandbox) {
 	require.NoError(t, err)
 	defer c.Close()
 
-	def, err := llb.Image("busybox").Marshal(context.TODO())
+	def, err := llb.Image("busybox").Marshal(testutil.GetContext(t))
 	require.NoError(t, err)
 
 	destDir, err := ioutil.TempDir("", "buildkit")
@@ -300,7 +300,7 @@ func testHostnameLookup(t *testing.T, sb integration.Sandbox) {
 
 	st := llb.Image("busybox:latest").Run(llb.Shlex(`sh -c "ping -c 1 $(hostname)"`))
 
-	def, err := st.Marshal(context.TODO())
+	def, err := st.Marshal(testutil.GetContext(t))
 	require.NoError(t, err)
 
 	_, err = c.Solve(testutil.GetContext(t), def, SolveOpt{}, nil)
@@ -317,7 +317,7 @@ func testStdinClosed(t *testing.T, sb integration.Sandbox) {
 
 	st := llb.Image("busybox:latest").Run(llb.Shlex("cat"))
 
-	def, err := st.Marshal(context.TODO())
+	def, err := st.Marshal(testutil.GetContext(t))
 	require.NoError(t, err)
 
 	_, err = c.Solve(testutil.GetContext(t), def, SolveOpt{}, nil)
@@ -350,7 +350,7 @@ func testSSHMount(t *testing.T, sb integration.Sandbox) {
 
 	// no ssh exposed
 	st := llb.Image("busybox:latest").Run(llb.Shlex(`nosuchcmd`), llb.AddSSHSocket())
-	def, err := st.Marshal(context.TODO())
+	def, err := st.Marshal(testutil.GetContext(t))
 	require.NoError(t, err)
 
 	_, err = c.Solve(testutil.GetContext(t), def, SolveOpt{}, nil)
@@ -359,7 +359,7 @@ func testSSHMount(t *testing.T, sb integration.Sandbox) {
 
 	// custom ID not exposed
 	st = llb.Image("busybox:latest").Run(llb.Shlex(`nosuchcmd`), llb.AddSSHSocket(llb.SSHID("customID")))
-	def, err = st.Marshal(context.TODO())
+	def, err = st.Marshal(testutil.GetContext(t))
 	require.NoError(t, err)
 
 	_, err = c.Solve(testutil.GetContext(t), def, SolveOpt{
@@ -370,7 +370,7 @@ func testSSHMount(t *testing.T, sb integration.Sandbox) {
 
 	// missing custom ID ignored on optional
 	st = llb.Image("busybox:latest").Run(llb.Shlex(`ls`), llb.AddSSHSocket(llb.SSHID("customID"), llb.SSHOptional))
-	def, err = st.Marshal(context.TODO())
+	def, err = st.Marshal(testutil.GetContext(t))
 	require.NoError(t, err)
 
 	_, err = c.Solve(testutil.GetContext(t), def, SolveOpt{
@@ -385,7 +385,7 @@ func testSSHMount(t *testing.T, sb integration.Sandbox) {
 			llb.AddSSHSocket())
 
 	out := st.AddMount("/out", llb.Scratch())
-	def, err = out.Marshal(context.TODO())
+	def, err = out.Marshal(testutil.GetContext(t))
 	require.NoError(t, err)
 
 	destDir, err := ioutil.TempDir("", "buildkit")
@@ -419,7 +419,7 @@ func testSSHMount(t *testing.T, sb integration.Sandbox) {
 			llb.AddSSHSocket())
 
 	out = st.AddMount("/out", llb.Scratch())
-	def, err = out.Marshal(context.TODO())
+	def, err = out.Marshal(testutil.GetContext(t))
 	require.NoError(t, err)
 
 	require.NoError(t, err)
@@ -446,7 +446,7 @@ func testSSHMount(t *testing.T, sb integration.Sandbox) {
 			llb.AddSSHSocket())
 
 	out = st.AddMount("/out", llb.Scratch())
-	def, err = out.Marshal(context.TODO())
+	def, err = out.Marshal(testutil.GetContext(t))
 	require.NoError(t, err)
 
 	k, err = rsa.GenerateKey(rand.Reader, 1024)
@@ -502,7 +502,7 @@ func testExtraHosts(t *testing.T, sb integration.Sandbox) {
 	st := llb.Image("busybox:latest").
 		Run(llb.Shlex(`sh -c 'cat /etc/hosts | grep myhost | grep 1.2.3.4'`), llb.AddExtraHost("myhost", net.ParseIP("1.2.3.4")))
 
-	def, err := st.Marshal(context.TODO())
+	def, err := st.Marshal(testutil.GetContext(t))
 	require.NoError(t, err)
 
 	_, err = c.Solve(testutil.GetContext(t), def, SolveOpt{}, nil)
@@ -519,7 +519,7 @@ func testNetworkMode(t *testing.T, sb integration.Sandbox) {
 	st := llb.Image("busybox:latest").
 		Run(llb.Shlex(`sh -c 'wget https://example.com 2>&1 | grep "wget: bad address"'`), llb.Network(llb.NetModeNone))
 
-	def, err := st.Marshal(context.TODO())
+	def, err := st.Marshal(testutil.GetContext(t))
 	require.NoError(t, err)
 
 	_, err = c.Solve(testutil.GetContext(t), def, SolveOpt{}, nil)
@@ -528,7 +528,7 @@ func testNetworkMode(t *testing.T, sb integration.Sandbox) {
 	st2 := llb.Image("busybox:latest").
 		Run(llb.Shlex(`ifconfig`), llb.Network(llb.NetModeHost))
 
-	def, err = st2.Marshal(context.TODO())
+	def, err = st2.Marshal(testutil.GetContext(t))
 	require.NoError(t, err)
 
 	_, err = c.Solve(testutil.GetContext(t), def, SolveOpt{
@@ -555,7 +555,7 @@ func testPushByDigest(t *testing.T, sb integration.Sandbox) {
 
 	st := llb.Scratch().File(llb.Mkfile("foo", 0600, []byte("data")))
 
-	def, err := st.Marshal(context.TODO())
+	def, err := st.Marshal(testutil.GetContext(t))
 	require.NoError(t, err)
 
 	name := registry + "/foo/bar"
@@ -622,7 +622,7 @@ func testSecurityMode(t *testing.T, sb integration.Sandbox) {
 		Run(llb.Shlex(command),
 			llb.Security(mode))
 
-	def, err := st.Marshal(context.TODO())
+	def, err := st.Marshal(testutil.GetContext(t))
 	require.NoError(t, err)
 
 	_, err = c.Solve(testutil.GetContext(t), def, SolveOpt{
@@ -658,7 +658,7 @@ func testSecurityModeSysfs(t *testing.T, sb integration.Sandbox) {
 		Run(llb.Shlex(command),
 			llb.Security(mode))
 
-	def, err := st.Marshal(context.TODO())
+	def, err := st.Marshal(testutil.GetContext(t))
 	require.NoError(t, err)
 
 	_, err = c.Solve(testutil.GetContext(t), def, SolveOpt{
@@ -686,7 +686,7 @@ func testSecurityModeErrors(t *testing.T, sb integration.Sandbox) {
 		st := llb.Image("busybox:latest").
 			Run(llb.Shlex(`sh -c 'echo sandbox'`))
 
-		def, err := st.Marshal(context.TODO())
+		def, err := st.Marshal(testutil.GetContext(t))
 		require.NoError(t, err)
 
 		_, err = c.Solve(testutil.GetContext(t), def, SolveOpt{
@@ -699,7 +699,7 @@ func testSecurityModeErrors(t *testing.T, sb integration.Sandbox) {
 		st := llb.Image("busybox:latest").
 			Run(llb.Shlex(`sh -c 'echo insecure'`), llb.Security(llb.SecurityModeInsecure))
 
-		def, err := st.Marshal(context.TODO())
+		def, err := st.Marshal(testutil.GetContext(t))
 		require.NoError(t, err)
 
 		_, err = c.Solve(testutil.GetContext(t), def, SolveOpt{}, nil)
@@ -873,7 +873,7 @@ func testSecretMounts(t *testing.T, sb integration.Sandbox) {
 	st := llb.Image("busybox:latest").
 		Run(llb.Shlex(`sh -c 'mount | grep mysecret | grep "type tmpfs" && [ "$(cat /run/secrets/mysecret)" = 'foo-secret' ]'`), llb.AddSecret("/run/secrets/mysecret"))
 
-	def, err := st.Marshal(context.TODO())
+	def, err := st.Marshal(testutil.GetContext(t))
 	require.NoError(t, err)
 
 	_, err = c.Solve(testutil.GetContext(t), def, SolveOpt{
@@ -887,7 +887,7 @@ func testSecretMounts(t *testing.T, sb integration.Sandbox) {
 	st = llb.Image("busybox:latest").
 		Run(llb.Shlex(`echo secret2`), llb.AddSecret("/run/secrets/mysecret2", llb.SecretOptional))
 
-	def, err = st.Marshal(context.TODO())
+	def, err = st.Marshal(testutil.GetContext(t))
 	require.NoError(t, err)
 
 	_, err = c.Solve(testutil.GetContext(t), def, SolveOpt{
@@ -901,7 +901,7 @@ func testSecretMounts(t *testing.T, sb integration.Sandbox) {
 	st = llb.Image("busybox:latest").
 		Run(llb.Shlex(`echo secret3`), llb.AddSecret("/run/secrets/mysecret3"))
 
-	def, err = st.Marshal(context.TODO())
+	def, err = st.Marshal(testutil.GetContext(t))
 	require.NoError(t, err)
 
 	_, err = c.Solve(testutil.GetContext(t), def, SolveOpt{
@@ -913,7 +913,7 @@ func testSecretMounts(t *testing.T, sb integration.Sandbox) {
 	st = llb.Image("busybox:latest").
 		Run(llb.Shlex(`sh -c '[ "$(stat -c "%u %g %f" /run/secrets/mysecret4)" = "1 1 81ff" ]' `), llb.AddSecret("/run/secrets/mysecret4", llb.SecretID("mysecret"), llb.SecretFileOpt(1, 1, 0777)))
 
-	def, err = st.Marshal(context.TODO())
+	def, err = st.Marshal(testutil.GetContext(t))
 	require.NoError(t, err)
 
 	_, err = c.Solve(testutil.GetContext(t), def, SolveOpt{
@@ -935,7 +935,7 @@ func testTmpfsMounts(t *testing.T, sb integration.Sandbox) {
 	st := llb.Image("busybox:latest").
 		Run(llb.Shlex(`sh -c 'mount | grep /foobar | grep "type tmpfs" && touch /foobar/test'`), llb.AddMount("/foobar", llb.Scratch(), llb.Tmpfs()))
 
-	def, err := st.Marshal(context.TODO())
+	def, err := st.Marshal(testutil.GetContext(t))
 	require.NoError(t, err)
 
 	_, err = c.Solve(testutil.GetContext(t), def, SolveOpt{}, nil)
@@ -990,7 +990,7 @@ func testLocalSymlinkEscape(t *testing.T, sb integration.Sandbox) {
 	st := llb.Image("busybox:latest").
 		Run(llb.Shlex(`sh /mount/test.sh`), llb.AddMount("/mount", local, llb.Readonly))
 
-	def, err := st.Marshal(context.TODO())
+	def, err := st.Marshal(testutil.GetContext(t))
 	require.NoError(t, err)
 
 	_, err = c.Solve(testutil.GetContext(t), def, SolveOpt{
@@ -1015,7 +1015,7 @@ func testRelativeWorkDir(t *testing.T, sb integration.Sandbox) {
 		Run(llb.Shlex(`sh -c "pwd > /out/pwd"`)).
 		AddMount("/out", llb.Scratch())
 
-	def, err := pwd.Marshal(context.TODO())
+	def, err := pwd.Marshal(testutil.GetContext(t))
 	require.NoError(t, err)
 
 	destDir, err := ioutil.TempDir("", "buildkit")
@@ -1048,7 +1048,7 @@ func testFileOpMkdirMkfile(t *testing.T, sb integration.Sandbox) {
 	st := llb.Scratch().
 		File(llb.Mkdir("/foo", 0700).Mkfile("bar", 0600, []byte("contents")))
 
-	def, err := st.Marshal(context.TODO())
+	def, err := st.Marshal(testutil.GetContext(t))
 	require.NoError(t, err)
 
 	destDir, err := ioutil.TempDir("", "buildkit")
@@ -1104,7 +1104,7 @@ func testFileOpCopyRm(t *testing.T, sb integration.Sandbox) {
 				Rm("out/foo").
 				Copy(llb.Local("mylocal2"), "file2", "/"))
 
-	def, err := st.Marshal(context.TODO())
+	def, err := st.Marshal(testutil.GetContext(t))
 	require.NoError(t, err)
 
 	destDir, err := ioutil.TempDir("", "buildkit")
@@ -1170,7 +1170,7 @@ func testFileOpRmWildcard(t *testing.T, sb integration.Sandbox) {
 	).File(
 		llb.Rm("*/target", llb.WithAllowWildcard(true)),
 	)
-	def, err := st.Marshal(context.TODO())
+	def, err := st.Marshal(testutil.GetContext(t))
 	require.NoError(t, err)
 
 	destDir, err := ioutil.TempDir("", "buildkit")
@@ -1229,7 +1229,7 @@ func testBuildMultiMount(t *testing.T, sb integration.Sandbox) {
 	cp := ls.Run(llb.Shlex("/bin/cp -a /busybox/etc/passwd baz"))
 	cp.AddMount("/busybox", busybox)
 
-	def, err := cp.Marshal(context.TODO())
+	def, err := cp.Marshal(testutil.GetContext(t))
 	require.NoError(t, err)
 
 	_, err = c.Solve(testutil.GetContext(t), def, SolveOpt{}, nil)
@@ -1261,7 +1261,7 @@ func testBuildHTTPSource(t *testing.T, sb integration.Sandbox) {
 	// invalid URL first
 	st := llb.HTTP(server.URL + "/bar")
 
-	def, err := st.Marshal(context.TODO())
+	def, err := st.Marshal(testutil.GetContext(t))
 	require.NoError(t, err)
 
 	_, err = c.Solve(testutil.GetContext(t), def, SolveOpt{}, nil)
@@ -1271,7 +1271,7 @@ func testBuildHTTPSource(t *testing.T, sb integration.Sandbox) {
 	// first correct request
 	st = llb.HTTP(server.URL + "/foo")
 
-	def, err = st.Marshal(context.TODO())
+	def, err = st.Marshal(testutil.GetContext(t))
 	require.NoError(t, err)
 
 	_, err = c.Solve(testutil.GetContext(t), def, SolveOpt{}, nil)
@@ -1304,7 +1304,7 @@ func testBuildHTTPSource(t *testing.T, sb integration.Sandbox) {
 	// test extra options
 	st = llb.HTTP(server.URL+"/foo", llb.Filename("bar"), llb.Chmod(0741), llb.Chown(1000, 1000))
 
-	def, err = st.Marshal(context.TODO())
+	def, err = st.Marshal(testutil.GetContext(t))
 	require.NoError(t, err)
 
 	_, err = c.Solve(testutil.GetContext(t), def, SolveOpt{
@@ -1352,7 +1352,7 @@ func testResolveAndHosts(t *testing.T, sb integration.Sandbox) {
 	run(`sh -c "cp /etc/resolv.conf ."`)
 	run(`sh -c "cp /etc/hosts ."`)
 
-	def, err := st.Marshal(context.TODO())
+	def, err := st.Marshal(testutil.GetContext(t))
 	require.NoError(t, err)
 
 	destDir, err := ioutil.TempDir("", "buildkit")
@@ -1401,7 +1401,7 @@ func testUser(t *testing.T, sb integration.Sandbox) {
 	st = st.Run(llb.Shlex("cp -a /wd/. /out/"))
 	out := st.AddMount("/out", llb.Scratch())
 
-	def, err := out.Marshal(context.TODO())
+	def, err := out.Marshal(testutil.GetContext(t))
 	require.NoError(t, err)
 
 	destDir, err := ioutil.TempDir("", "buildkit")
@@ -1455,7 +1455,7 @@ func testOCIExporter(t *testing.T, sb integration.Sandbox) {
 	run(`sh -c "echo -n first > foo"`)
 	run(`sh -c "echo -n second > bar"`)
 
-	def, err := st.Marshal(context.TODO())
+	def, err := st.Marshal(testutil.GetContext(t))
 	require.NoError(t, err)
 
 	for _, exp := range []string{ExporterOCI, ExporterDocker} {

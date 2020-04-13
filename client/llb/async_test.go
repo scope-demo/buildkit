@@ -2,6 +2,7 @@ package llb
 
 import (
 	"context"
+	"github.com/moby/buildkit/util/testutil"
 	"testing"
 	"time"
 
@@ -10,7 +11,7 @@ import (
 )
 
 func TestAsyncNonBlocking(t *testing.T) {
-	ctx := context.TODO()
+	ctx := testutil.GetContext(t)
 
 	wait := make(chan struct{})
 	ran := make(chan struct{})
