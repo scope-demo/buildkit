@@ -55,7 +55,7 @@ func testClientGatewaySolve(t *testing.T, sb integration.Sandbox) {
 		)
 		st := run.AddMount("/out", llb.Scratch())
 
-		def, err := st.Marshal()
+		def, err := st.Marshal(ctx)
 		if err != nil {
 			return nil, errors.Wrap(err, "failed to marshal state")
 		}
