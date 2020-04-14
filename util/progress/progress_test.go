@@ -3,6 +3,7 @@ package progress
 import (
 	"context"
 	"fmt"
+	"github.com/moby/buildkit/util/testutil"
 	"io"
 	"testing"
 	"time"
@@ -13,7 +14,7 @@ import (
 
 func TestProgress(t *testing.T) {
 	t.Parallel()
-	s, err := calc(context.TODO(), 4, "calc")
+	s, err := calc(testutil.GetContext(t), 4, "calc")
 	assert.NoError(t, err)
 	assert.Equal(t, 10, s)
 

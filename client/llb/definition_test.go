@@ -6,6 +6,7 @@ import (
 	"testing"
 
 	"github.com/containerd/containerd/platforms"
+	"github.com/moby/buildkit/util/testutil"
 	"github.com/stretchr/testify/require"
 )
 
@@ -25,12 +26,12 @@ func TestDefinitionEquivalence(t *testing.T) {
 		{"mount", Image("busybox").Run(Shlex(`sh -c "echo foo > /out/foo"`)).AddMount("/out", Scratch())},
 	} {
 		tc := tc
-		t.Run(tc.name, func(t *testing.T) {
+		testutil.GetTracedTest(t).Run(tc.name, func(t *testing.T) {
 			t.Parallel()
 
-			ctx := context.TODO()
+			ctx := testutil.GetContext(t)
 
-			def, err := tc.state.Marshal(context.TODO())
+			def, err := tc.state.Marshal(testutil.GetContext(t))
 			require.NoError(t, err)
 
 			op, err := NewDefinitionOp(def.ToPB())
@@ -41,7 +42,7 @@ func TestDefinitionEquivalence(t *testing.T) {
 
 			st2 := NewState(op.Output())
 
-			def2, err := st2.Marshal(context.TODO())
+			def2, err := st2.Marshal(testutil.GetContext(t))
 			require.NoError(t, err)
 			require.Equal(t, len(def.Def), len(def2.Def))
 			require.Equal(t, len(def.Metadata), len(def2.Metadata))

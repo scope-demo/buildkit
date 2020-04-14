@@ -20,6 +20,8 @@ import (
 	"github.com/moby/buildkit/session/auth"
 	"github.com/moby/buildkit/util/tracing"
 	"github.com/pkg/errors"
+	scopeenv "go.undefinedlabs.com/scopeagent/env"
+	scopenethttp "go.undefinedlabs.com/scopeagent/instrumentation/nethttp"
 )
 
 func fillInsecureOpts(host string, c config.RegistryConfig, h *docker.RegistryHost) error {
@@ -127,6 +129,7 @@ func NewRegistryConfig(m map[string]config.RegistryConfig) docker.RegistryHosts 
 				host = "registry-1.docker.io"
 			}
 
+
 			h := docker.RegistryHost{
 				Scheme:       "https",
 				Client:       newDefaultClient(),
@@ -189,6 +192,16 @@ func hostsWithCredentials(ctx context.Context, hosts docker.RegistryHosts, sm *s
 }
 
 func newDefaultClient() *http.Client {
+	if scopeenv.ScopeDsn.Value != "" {
+		return &http.Client{
+			Transport: &scopenethttp.Transport{
+				RoundTripper: newDefaultTransport(),
+				PayloadInstrumentation: true,
+				Stacktrace: true,
+			},
+		}
+	}
+
 	return &http.Client{
 		Transport: newDefaultTransport(),
 	}

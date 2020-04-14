@@ -2,6 +2,8 @@ package frontend
 
 import (
 	"context"
+	"github.com/moby/buildkit/util/testutil"
+	"github.com/opentracing/opentracing-go"
 	"io/ioutil"
 	"os"
 	"path/filepath"
@@ -36,10 +38,21 @@ func TestFrontendIntegration(t *testing.T) {
 	})
 }
 
-func testRefReadFile(t *testing.T, sb integration.Sandbox) {
-	ctx := context.TODO()
+func newClient(ctx context.Context, address string) (*client.Client, error) {
+	var opts []client.ClientOpt
+	if span := opentracing.SpanFromContext(ctx); span != nil {
+		opts = append(opts, client.WithTracer(span.Tracer()))
+	}
 
-	c, err := client.New(ctx, sb.Address())
+	return client.New(ctx, address, opts...)
+}
+
+func testRefReadFile(t *testing.T, sb integration.Sandbox) {
+	testutil.SetTestCode(t)
+
+	ctx := testutil.GetContext(t)
+
+	c, err := newClient(ctx, sb.Address())
 	require.NoError(t, err)
 	defer c.Close()
 
@@ -80,7 +93,7 @@ func testRefReadFile(t *testing.T, sb integration.Sandbox) {
 			{"mid", []byte(`oba`), &gateway.FileRange{Offset: 2, Length: 3}},
 			{"overrun", []byte(`bar`), &gateway.FileRange{Offset: 3, Length: 10}},
 		} {
-			t.Run(tc.name, func(t *testing.T) {
+			testutil.GetTracedTest(t).Run(tc.name, func(t *testing.T) {
 				r, err := ref.ReadFile(ctx, gateway.ReadRequest{
 					Filename: "test",
 					Range:    tc.r,
@@ -102,9 +115,10 @@ func testRefReadFile(t *testing.T, sb integration.Sandbox) {
 }
 
 func testRefReadDir(t *testing.T, sb integration.Sandbox) {
-	ctx := context.TODO()
+	testutil.SetTestCode(t)
+	ctx := testutil.GetContext(t)
 
-	c, err := client.New(ctx, sb.Address())
+	c, err := newClient(ctx, sb.Address())
 	require.NoError(t, err)
 	defer c.Close()
 
@@ -196,7 +210,7 @@ func testRefReadDir(t *testing.T, sb integration.Sandbox) {
 				},
 			},
 		} {
-			t.Run(tc.name, func(t *testing.T) {
+			testutil.GetTracedTest(t).Run(tc.name, func(t *testing.T) {
 				dirents, err := ref.ReadDir(ctx, tc.req)
 				require.NoError(t, err)
 				for _, s := range dirents {
@@ -218,9 +232,10 @@ func testRefReadDir(t *testing.T, sb integration.Sandbox) {
 }
 
 func testRefStatFile(t *testing.T, sb integration.Sandbox) {
-	ctx := context.TODO()
+	testutil.SetTestCode(t)
+	ctx := testutil.GetContext(t)
 
-	c, err := client.New(ctx, sb.Address())
+	c, err := newClient(ctx, sb.Address())
 	require.NoError(t, err)
 	defer c.Close()
 

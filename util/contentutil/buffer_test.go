@@ -2,7 +2,7 @@ package contentutil
 
 import (
 	"bytes"
-	"context"
+	"github.com/moby/buildkit/util/testutil"
 	"io"
 	"testing"
 
@@ -16,7 +16,7 @@ import (
 
 func TestReadWrite(t *testing.T) {
 	t.Parallel()
-	ctx := context.TODO()
+	ctx := testutil.GetContext(t)
 
 	b := NewBuffer()
 
@@ -46,7 +46,7 @@ func TestReadWrite(t *testing.T) {
 
 func TestReaderAt(t *testing.T) {
 	t.Parallel()
-	ctx := context.TODO()
+	ctx := testutil.GetContext(t)
 
 	b := NewBuffer()
 

@@ -2,7 +2,7 @@ package contentutil
 
 import (
 	"bytes"
-	"context"
+	"github.com/moby/buildkit/util/testutil"
 	"testing"
 
 	"github.com/containerd/containerd/content"
@@ -13,7 +13,7 @@ import (
 
 func TestCopy(t *testing.T) {
 	t.Parallel()
-	ctx := context.TODO()
+	ctx := testutil.GetContext(t)
 
 	b0 := NewBuffer()
 	b1 := NewBuffer()
