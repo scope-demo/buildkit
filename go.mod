@@ -26,11 +26,12 @@ require (
 	github.com/docker/docker-credential-helpers v0.6.0 // indirect
 	github.com/docker/go-connections v0.3.0
 	github.com/docker/libnetwork v0.8.0-dev.2.0.20200226230617-d8334ccdb9be
+	github.com/go-errors/errors v1.0.2 // indirect
 	github.com/gofrs/flock v0.7.0
 	github.com/gogo/googleapis v1.3.2
 	github.com/gogo/protobuf v1.3.1
 	github.com/golang/groupcache v0.0.0-20200121045136-8c9f03a8e57e // indirect
-	github.com/golang/protobuf v1.3.5
+	github.com/golang/protobuf v1.4.0
 	github.com/google/go-cmp v0.4.0
 	github.com/google/shlex v0.0.0-20150127133951-6f45313302b9
 	github.com/grpc-ecosystem/grpc-opentracing v0.0.0-20180507213350-8e809c8a8645
@@ -67,11 +68,11 @@ require (
 	github.com/vishvananda/netns v0.0.0-20180720170159-13995c7128cc // indirect
 	go.etcd.io/bbolt v1.3.3
 	go.opencensus.io v0.22.3 // indirect
-	go.undefinedlabs.com/scopeagent v0.1.16-0.20200407085120-9d2f515cb15a
+	go.undefinedlabs.com/scopeagent v0.2.0
 	golang.org/x/crypto v0.0.0-20200406173513-056763e48d71
 	golang.org/x/net v0.0.0-20200324143707-d3edc9973b7e
 	golang.org/x/sync v0.0.0-20200317015054-43a5402ce75a
-	golang.org/x/sys v0.0.0-20200406155108-e3b113bbe6a4
+	golang.org/x/sys v0.0.0-20200413165638-669c56c373c4
 	golang.org/x/time v0.0.0-20191024005414-555d28b269f0
 	google.golang.org/genproto v0.0.0-20200407120235-9eb9bb161a06
 	google.golang.org/grpc v1.28.1
