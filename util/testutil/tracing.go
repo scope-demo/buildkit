@@ -2,6 +2,7 @@ package testutil
 
 import (
 	"context"
+	"go.undefinedlabs.com/scopeagent/env"
 	"testing"
 
 	"go.undefinedlabs.com/scopeagent"
@@ -9,11 +10,19 @@ import (
 )
 
 func GetContext(t *testing.T) context.Context {
+	if env.ScopeDsn.Value == "" {
+		return context.TODO()
+	}
+
 	return scopeagent.GetContextFromTest(t)
 }
 
 // This method needs to be called inside of the subtest code.
 func SetTestCode(t *testing.T) {
+	if env.ScopeDsn.Value == "" {
+		return
+	}
+
 	scopeagent.SetTestCodeFromCallerSkip(t, 1)
 }
 
